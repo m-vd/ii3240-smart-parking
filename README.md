@@ -118,7 +118,7 @@ Additional information about your API call. Try to use verbs that match both req
 
 ## Authors
 
-* **Rifda Annelies Az Zahra ** - [18216001](http://178.128.104.74:9000/18216001)
+* **Rifda Annelies Az Zahra** - [18216001](http://178.128.104.74:9000/18216001)
 * **Ivan Wiryadi** - [18216017](http://178.128.104.74:9000/18216017)
 * **Ahmad TR** - [18216030](http://178.128.104.74:9000/18216030)
 * **Ardji N.S** - [18216021](http://178.128.104.74:9000/18216021)
