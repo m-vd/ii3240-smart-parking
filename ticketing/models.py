@@ -8,4 +8,4 @@ class Ticket(models.Model):
     entryTime   = models.DateTimeField(auto_now_add=True)
     exitTime    = models.DateTimeField(null = True)
     userID      = models.CharField(max_length=30, editable=False)
-    
+    location    = models.CharField(max_length=30)

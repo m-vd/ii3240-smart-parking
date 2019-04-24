@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     #own
     'ticketing',
     'api',
+    'user',
 ]
 
 MIDDLEWARE = [

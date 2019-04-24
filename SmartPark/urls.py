@@ -15,9 +15,11 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
-from api.views import TicketAPI
+from api.views import CheckInAPI
+from api.views import CheckOutAPI
 
 urlpatterns = [
-    path('', TicketAPI),
+    path('checkin', CheckInAPI),
+    path('checkout', CheckOutAPI),
     path('admin/', admin.site.urls),
 ]
