@@ -7,4 +7,4 @@ class User(models.Model):
     userEmail   = models.CharField(max_length=50)
     userPhone   = models.CharField(max_length=13)
     cardNumber  = models.CharField(max_length=50)
-    userMoney   = models.PositiveIntegerField()
+    userBalance   = models.PositiveIntegerField()
