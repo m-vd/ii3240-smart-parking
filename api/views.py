@@ -6,9 +6,9 @@ from ticketing.models import Ticket
 # Create your views here.
 def TicketAPI(request, *args, **kwargs):
     if (request.method == 'POST'):
-        t = Ticket()
+        user_id = request.POST.get('userID')
+        t = Ticket(userID = user_id)
         t.save()
-
         output = {
             'ticketID' : str(t.ticketID),
             'entryTime' : str(t.entryTime),
