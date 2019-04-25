@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     'ticketing',
     'api',
     'user',
+    'payment'
 ]
 
 MIDDLEWARE = [

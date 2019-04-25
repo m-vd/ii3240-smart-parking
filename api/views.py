@@ -3,6 +3,7 @@ from django.http import HttpResponse
 from django.shortcuts import render
 from ticketing.models import Ticket 
 from user.models import User
+from payment.models import Payment
 
 
 # Create your views here.
@@ -45,14 +46,18 @@ def CheckOutAPI(request, *args, **kwargs):
 def PaymentAPI(ticket_id, *args, **kwargs):
     t = Ticket.objects.get(ticketID=ticket_id)
     u = User.objects.get(userID = t.userID)
+    price = 2000
+    dur = 1
+    total = dur*price
     #insert balance calculator
-    amount = 2000
-    if (u.userBalance >= amount):
-        u.userBalance -= amount
-        #p = Payment()
-        return HttpResponse("Payment successfull, you has IDR" + str(u.userBalance) + " left")
+    if (u.userBalance >= total):
+        u.userBalance = u.userBalance - total
+        u.save()
+        p = Payment(userID = t.userID, ticketID=ticket_id, duration=dur, amount=total)
+        p.save()
+        return HttpResponse("Payment successfull, you have IDR" + str(u.userBalance) + " left")
     else:
-        return HttpResponse("Balance not sufficient, Amount = " + str(amount))
+        return HttpResponse("Your balance is not sufficient, Amount = " + str(total))
 
 
     
