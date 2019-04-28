@@ -17,9 +17,14 @@ from django.contrib import admin
 from django.urls import path
 from api.views import CheckInAPI
 from api.views import CheckOutAPI
+from api.views import AskHelpAPI
+from api.views import AnswerHelpAPI
+
 
 urlpatterns = [
     path('checkin', CheckInAPI),
     path('checkout', CheckOutAPI),
     path('admin/', admin.site.urls),
+    path('askhelp', AskHelpAPI),
+    path('answerhelp', AnswerHelpAPI),
 ]

@@ -4,9 +4,9 @@ from django.shortcuts import render
 from ticketing.models import Ticket 
 from user.models import User
 from payment.models import Payment
+from help.models import Help
 
 
-# Create your views here.
 def CheckInAPI(request, *args, **kwargs):
     if (request.method == 'POST'):
         user_id = request.POST.get('userID')
@@ -64,3 +64,41 @@ def PaymentAPI(ticket_id, *args, **kwargs):
         t.save()
         return HttpResponse("Your balance is not sufficient, Amount = " + str(total))
 
+def AskHelpAPI(request, *args, **kwargs):
+    if (request.method == 'POST'):
+        user_id = request.POST.get('userID')
+        question = request.POST.get('question')
+        u = User.objects.get(userID = user_id)
+        if (u):
+            h = Help(user=u, question = question)
+            h.save()
+            output = {
+                'helpID' : str(h.helpID),
+                'userID' : str(h.user.userID),
+                'question' : str(h.question),
+            }
+            return HttpResponse(json.dumps(output))
+        else: 
+            return HttpResponse("User not registered")
+    else:
+        return HttpResponse("Hello")
+
+def AnswerHelpAPI(request, *args, **kwargs):
+    if (request.method == 'POST'):
+        help_id = request.POST.get('helpID')
+        answer = request.POST.get('answer')
+        h = Help.objects.get(helpID = help_id)
+        if (h):
+            h.answer = answer
+            h.answerTime = datetime.datetime.now()
+            h.save()
+            output = {
+                'helpID' : str(h.helpID),
+                'question' : str(h.user.userID),
+                'answer' : str(h.question),
+            }
+            return HttpResponse(json.dumps(output))
+        else: 
+            return HttpResponse("Help ID not valid")
+    else:
+        return HttpResponse("Hello")
