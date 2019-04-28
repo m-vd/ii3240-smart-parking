@@ -36,8 +36,8 @@ def CheckOutAPI(request, *args, **kwargs):
             t.exitTime = datetime.datetime.now()
             t.save()    
             u = User.objects.get(userID=user_id)
-            PaymentAPI(t.ticketID)
-            return HttpResponse("Goodbye, " + str(u.userName))
+            resp = PaymentAPI(t.ticketID)
+            return resp
         else: 
             return HttpResponse("You have not checked in yet")
     else:
@@ -47,9 +47,12 @@ def PaymentAPI(ticket_id, *args, **kwargs):
     t = Ticket.objects.get(ticketID=ticket_id)
     u = User.objects.get(userID = t.userID)
     price = 2000
-    dur = 1
-    total = dur*price
-    #insert balance calculator
+    dur = (t.exitTime-t.entryTime).seconds//3600 
+    remain = (t.exitTime-t.entryTime).seconds%3600 
+    print(dur)
+    total = dur*price 
+    if (remain):
+        total += price
     if (u.userBalance >= total):
         u.userBalance = u.userBalance - total
         u.save()
@@ -57,7 +60,7 @@ def PaymentAPI(ticket_id, *args, **kwargs):
         p.save()
         return HttpResponse("Payment successfull, you have IDR" + str(u.userBalance) + " left")
     else:
+        t.exitTime = None
+        t.save()
         return HttpResponse("Your balance is not sufficient, Amount = " + str(total))
 
-
-    

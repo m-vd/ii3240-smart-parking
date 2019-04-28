@@ -42,7 +42,8 @@ INSTALLED_APPS = [
     'ticketing',
     'api',
     'user',
-    'payment'
+    'payment',
+    'parkingLot'
 ]
 
 MIDDLEWARE = [
