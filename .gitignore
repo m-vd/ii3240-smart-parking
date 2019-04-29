@@ -205,3 +205,5 @@ dockersetting.sh
 
 #Own
 .vscode
+db.sqlite3
+__pycache__

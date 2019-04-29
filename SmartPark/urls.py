@@ -19,6 +19,7 @@ from api.views import CheckInAPI
 from api.views import CheckOutAPI
 from api.views import AskHelpAPI
 from api.views import AnswerHelpAPI
+from api.views import CheckInLotAPI
 
 
 urlpatterns = [
@@ -27,4 +28,5 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('askhelp', AskHelpAPI),
     path('answerhelp', AnswerHelpAPI),
+    path('lot/checkin', CheckInLotAPI),
 ]

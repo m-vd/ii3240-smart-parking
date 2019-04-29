@@ -2,15 +2,17 @@ import json, datetime
 from django.http import HttpResponse
 from django.http import HttpResponseForbidden, HttpResponseBadRequest
 from django.shortcuts import render
+
+#Import models
 from ticketing.models import Ticket 
 from parkingLot.models import Lot
 from user.models import User
 from payment.models import Payment
 from help.models import Help
 
-
-
 def CheckInAPI(request, *args, **kwargs):
+    #API to check in to park
+    #Needed parameters: userID and location
     if (request.method == 'POST'):
         user_id = request.POST.get('userID')
         if (User.objects.filter(userID=user_id)):
@@ -18,8 +20,14 @@ def CheckInAPI(request, *args, **kwargs):
                 return HttpResponse("You are already in")
             else: 
                 parkloc = request.POST.get('location')
-                t = Ticket(userID = User.objects.get(userID=user_id), location = Lot.objects.get(lotName=parkloc))
+                lot = Lot.objects.get(lotName=parkloc)
+                t = Ticket(userID = User.objects.get(userID=user_id), location = lot)
+                
+                if (lot.lotName == "Sipil" or lot.lotName == "SR"):
+                    lot.capacity -= 1
+                    lot.save()
                 t.save()
+                
                 output = {
                     'ticketID' : str(t.ticketID),
                     'entryTime' : str(t.entryTime),
@@ -32,6 +40,8 @@ def CheckInAPI(request, *args, **kwargs):
         return HttpResponseForbidden()
 
 def CheckOutAPI(request, *args, **kwargs):
+    #API to checkout
+    #Needed parameters: userID
     if (request.method == 'POST'):
         user_id = request.POST.get('userID')
         if (Ticket.objects.filter(userID=user_id, exitTime__isnull=True)):
@@ -39,14 +49,14 @@ def CheckOutAPI(request, *args, **kwargs):
             t.exitTime = datetime.datetime.now()
             t.save()
             print(t)
-            resp = PaymentAPI(t)
+            resp = __PaymentAPI(t)
             return resp
         else: 
             return HttpResponse("You have not checked in yet")
     else:
         return HttpResponseForbidden()
 
-def PaymentAPI(ticket, *args, **kwargs):
+def __PaymentAPI(ticket, *args, **kwargs):
     u   = User.objects.get(userID = ticket.userID.userID)
     if (not u):
         return HttpResponse("error")
@@ -64,6 +74,9 @@ def PaymentAPI(ticket, *args, **kwargs):
             u.userBalance = u.userBalance - total
             u.save()
             p = Payment(userID = ticket.userID, ticketID=Ticket.objects.get(ticketID = ticket.ticketID), duration=dur, amount=total)
+            loc_obj = ticket.location
+            loc_obj.capacity += 1
+            loc_obj.save()
             p.save()
             return HttpResponse("Payment successfull, you have IDR" + str(u.userBalance) + " left")
         else:
@@ -116,3 +129,17 @@ def AnswerHelpAPI(request, *args, **kwargs):
             return HttpResponseBadRequest("No answer is given")
     else:
         return HttpResponse("Hello")
+
+def CheckInLotAPI(request, *args, **kwargs):
+    #API to add or remove capacity per Lot.
+    if (request.method == 'POST'):
+        location_id = request.POST.get('locationID')
+        if (location_id):
+            lot_obj = Lot.objects.get(lotID = location_id)
+            lot_obj.capacity -= 1
+            lot_obj.save()
+        else:
+            return HttpResponseBadRequest()
+
+    else:
+        return HttpResponseForbidden()
