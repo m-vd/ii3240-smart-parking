@@ -11,6 +11,8 @@ from parkingLot.models import Lot
 from user.models import User
 from payment.models import Payment
 from help.models import Help
+from disaster.models import Disaster
+
 
 def CheckInAPI(request, *args, **kwargs):
     #API to check in to park
@@ -91,7 +93,7 @@ def __PaymentAPI(ticket, *args, **kwargs):
             u.save()
             p = Payment(userID = ticket.userID, ticketID=Ticket.objects.get(ticketID = ticket.ticketID), duration=dur, amount=total)
             p.save()
-            return HttpResponse("Payment successfull, you have IDR" + str(u.userBalance) + " left")
+            return HttpResponse("Payment successfull, you have IDR " + str(u.userBalance) + " left")
         else:
             ticket.exitTime = None
             ticket.save()
@@ -156,3 +158,59 @@ def CheckInLotAPI(request, *args, **kwargs):
 
     else:
         return HttpResponseForbidden()
+
+def AddDisaster(request, *args, **kwargs):
+    if (request.method == 'POST'):
+        location = request.POST.get('location')
+        status = request.POST.get('status')
+        description = request.POST.get('description')
+        d = Disaster(location=location, status=status, description=description)
+        d.save()
+        output = {
+            'disasterID' : str(d.disasterID),
+            'status' : str(d.user.userID),
+            'location' : str(d.location),
+            'description' : str(d.description),
+        }
+        return HttpResponse(json.dumps(output))
+    else:
+        return HttpResponse("Hello")
+
+def UpdateDisaster(request, *args, **kwargs):
+    if (request.method == 'POST'):
+        disaster_id = request.POST.get('disasterID')
+        status = request.POST.get('status')
+        description = request.POST.get('description')
+        d = Disaster.objects.get(disasterID = disaster_id)
+        if (d):
+            d.status = status
+            d.updateTime = datetime.datetime.now()
+            d.description = description
+            d.save()
+            output = {
+                'disasterID' : str(d.disasterID),
+                'status' : str(d.user.userID),
+                'location' : str(d.location),
+                'description' : str(d.description),
+            }
+            return HttpResponse(json.dumps(output))
+        else: 
+            return HttpResponse("Disaster ID not valid")
+    else:
+        return HttpResponse("Hello")
+
+def getCapacity(request, *args, **kwargs):
+    if (request.method == 'GET'):
+        lot_name = request.GET.get('location')
+        l = Lot.objects.get(lotName = lot_name)
+        if (l):
+            output = {
+                'lotID' : str(l.lotID),
+                'location' : str(l.lotName),
+                'capacity' : str(l.capacity),
+            }
+            return HttpResponse(json.dumps(output))
+        else: 
+            return HttpResponse("Lot Name not valid")
+    else:
+        return HttpResponse("Hello")
