@@ -138,7 +138,6 @@ def AnswerHelpAPI(request, *args, **kwargs):
     else:
         return HttpResponse("Hello")
 
-<<<<<<< HEAD
 def CheckInLotAPI(request, *args, **kwargs):
     #API to add or remove capacity per Lot.
     if (request.method == 'POST'):
@@ -152,5 +151,4 @@ def CheckInLotAPI(request, *args, **kwargs):
 
     else:
         return HttpResponseForbidden()
-=======
->>>>>>> 19ab2317a63adb28052f2d4f05c58f99d122a194
+        
