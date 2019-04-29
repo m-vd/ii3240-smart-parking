@@ -33,6 +33,6 @@ urlpatterns = [
     path('lot/checkin', CheckInLotAPI),
     path('adddisaster', AddDisaster),
     path('updatedisaster', UpdateDisaster),
-    path('getcapacity', getCapacity),
+    path('capacity', getCapacity),
 
 ]

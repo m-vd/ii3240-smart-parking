@@ -10,5 +10,5 @@ class Payment(models.Model):
     userID      = models.ForeignKey(User,on_delete=models.CASCADE)
     ticketID    = models.ForeignKey(Ticket,on_delete=models.CASCADE)
     paymentTime = models.DateTimeField(auto_now_add=True)
-    duration    = models.PositiveIntegerField()
-    amount      = models.PositiveIntegerField()
+    duration    = models.PositiveIntegerField(editable = False)
+    amount      = models.PositiveIntegerField(editable = False)

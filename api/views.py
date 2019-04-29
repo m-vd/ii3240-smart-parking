@@ -16,38 +16,40 @@ from disaster.models import Disaster
 
 def CheckInAPI(request, *args, **kwargs):
     #API to check in to park
-    #Needed parameters: userID and location
+    #Needed parameters: userID and locationID
     if (request.method == 'POST'):
         user_id = request.POST.get('userID')
         if (User.objects.filter(userID=user_id)):
-            if (Ticket.objects.filter(userID=user_id, exitTime__isnull=True)):
+            if (Ticket.objects.filter(user=user_id, exitTime__isnull=True)):
                 return HttpResponse("You are already in")
             else: 
-                parkloc = request.POST.get('location')
-                lot = Lot.objects.get(lotName=parkloc)
-                t = Ticket(userID = User.objects.get(userID=user_id), location = lot)
+                location_id = request.POST.get('locationID')
+                lot = Lot.objects.get(lotID=location_id)
+                t = Ticket(user = (User.objects.get(userID = user_id)), location = lot)
                 
-                if (lot.lotName == "Sipil" or lot.lotName == "SR"):
+                if (lot.lotID == "Motor_Sipil" or lot.lotID == "Motor_SR" or lot.lotID == "Mobil_SR"):
                     lot.capacity -= 1
                     lot.save()
                 t.save()
-                
+
+                #Send Check In Notification
+                subject = 'You just check In!'
+                message = 'Welcome to ITB! \n You just parked your ride at ' + str(t.location.lotName) + '\n The parking will cost you IDR 2,000 perhour'        
+                to_list = [t.user.userEmail]
+                send_mail(subject,message,settings.EMAIL_HOST_USER,to_list,fail_silently=True)
+
+                #Generate output               
                 output = {
                     'ticketID' : str(t.ticketID),
                     'entryTime' : str(t.entryTime),
                     'exitTime' : str(t.exitTime),
                 }
-                subject = 'You just check In!'
-                message = 'Welcome to ITB! \n You just park your motorcycle at ' + str(t.location.lotName) + '\n The parking will cost you IDR2000 perhour'
-                from_email = settings.EMAIL_HOST_USER
-                to_list = [t.userID.userEmail]
-
-                send_mail(subject,message,from_email,to_list,fail_silently=True)
                 return HttpResponse(json.dumps(output))
         else:
             return HttpResponse("You're not allowed to park here")
     else:
         return HttpResponseForbidden()
+
 
 def CheckOutAPI(request, *args, **kwargs):
     #API to checkout
@@ -56,14 +58,14 @@ def CheckOutAPI(request, *args, **kwargs):
         user_id = request.POST.get('userID')
         
         #Find ticket and set exit time
-        if (Ticket.objects.filter(userID=user_id, exitTime__isnull=True)):
-            t = Ticket.objects.get(userID=user_id, exitTime__isnull=True)
+        if (Ticket.objects.filter(user=user_id, exitTime__isnull=True)):
+            t = Ticket.objects.get(user=user_id, exitTime__isnull=True)
             t.exitTime = datetime.datetime.now()
             t.save()
             
             # Add back capacity for Sipil or SR 
             loc_obj = t.location
-            if (loc_obj.lotName == "Sipil" or loc_obj.lotName == "SR"):
+            if (loc_obj.lotID == "Motor_Sipil" or loc_obj.lotID == "Motor_SR" or loc_obj.lotID == "Mobil_SR"):
                 loc_obj.capacity += 1
                 loc_obj.save()
                 
@@ -75,7 +77,7 @@ def CheckOutAPI(request, *args, **kwargs):
         return HttpResponseForbidden()
 
 def __PaymentAPI(ticket, *args, **kwargs):
-    u   = User.objects.get(userID = ticket.userID.userID)
+    u   = User.objects.get(userID = ticket.user.userID)
     if (not u):
         return HttpResponse("error")
     else:
@@ -91,7 +93,7 @@ def __PaymentAPI(ticket, *args, **kwargs):
         if (u.userBalance >= total):
             u.userBalance = u.userBalance - total
             u.save()
-            p = Payment(userID = ticket.userID, ticketID=Ticket.objects.get(ticketID = ticket.ticketID), duration=dur, amount=total)
+            p = Payment(userID = ticket.user, ticketID=Ticket.objects.get(ticketID = ticket.ticketID), duration=dur, amount=total)
             p.save()
             return HttpResponse("Payment successfull, you have IDR " + str(u.userBalance) + " left")
         else:
@@ -101,6 +103,7 @@ def __PaymentAPI(ticket, *args, **kwargs):
 
 def AskHelpAPI(request, *args, **kwargs):
     # API to handle POST Request asking a question or help
+    # required parameters : userID, question
     if (request.method == 'POST'):
         question = request.POST.get('question')
         if (question):
@@ -123,6 +126,7 @@ def AskHelpAPI(request, *args, **kwargs):
 
 def AnswerHelpAPI(request, *args, **kwargs):
     #API to handle POST Request answering a question or help
+    # required parameters : helpID, answer
     if (request.method == 'POST'):
         answer = request.POST.get('answer')
         help_id = request.POST.get('helpID')
@@ -147,6 +151,7 @@ def AnswerHelpAPI(request, *args, **kwargs):
 
 def CheckInLotAPI(request, *args, **kwargs):
     #API to add or remove capacity per Lot.
+    #required parameters: location ID
     if (request.method == 'POST'):
         location_id = request.POST.get('locationID')
         if (location_id):
@@ -160,15 +165,27 @@ def CheckInLotAPI(request, *args, **kwargs):
         return HttpResponseForbidden()
 
 def AddDisaster(request, *args, **kwargs):
+    #required parameter: locationID, status, description
     if (request.method == 'POST'):
-        location = request.POST.get('location')
+        location_id = request.POST.get('locationID')
         status = request.POST.get('status')
         description = request.POST.get('description')
-        d = Disaster(location=location, status=status, description=description)
+        d = Disaster(location=Lot.objects.get(lotID = location_id), status=status, description=description)
         d.save()
+
+        # Find all who park at the disaster location and send notifications
+        to_list = []
+        disasterQuery = Ticket.objects.filter(location = location_id, exitTime__isnull=True)
+        for ticket in (disasterQuery):
+            to_list.append(ticket.user.userEmail)
+        subject = 'Please check your ride'
+        message = 'We are sorry to inform that ' + description + ' has happened at ' + Lot.objects.get(lotID = location_id).lotName + '\n Please check your vehicle to ensure.' 
+
+        send_mail(subject,message,settings.EMAIL_HOST_USER,to_list,fail_silently=True)
+
         output = {
             'disasterID' : str(d.disasterID),
-            'status' : str(d.user.userID),
+            'status' : str(d.status),
             'location' : str(d.location),
             'description' : str(d.description),
         }
@@ -200,14 +217,14 @@ def UpdateDisaster(request, *args, **kwargs):
         return HttpResponse("Hello")
 
 def getCapacity(request, *args, **kwargs):
+    #required parameters : locationID
     if (request.method == 'GET'):
-        lot_name = request.GET.get('location')
-        l = Lot.objects.get(lotName = lot_name)
+        lot_id = request.GET.get('locationID')
+        l = Lot.objects.get(lotID = lot_id)
         if (l):
             output = {
-                'lotID' : str(l.lotID),
-                'location' : str(l.lotName),
-                'capacity' : str(l.capacity),
+                'location_name' : str(l.lotName),
+                'location_capacity' : str(l.capacity),
             }
             return HttpResponse(json.dumps(output))
         else: 
