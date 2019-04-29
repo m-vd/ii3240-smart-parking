@@ -1,11 +1,13 @@
 import json, datetime
 from django.http import HttpResponse
-from django.http import HttpResponseForbidden
+from django.http import HttpResponseForbidden, HttpResponseBadRequest
 from django.shortcuts import render
 from ticketing.models import Ticket 
+from parkingLot.models import Lot
 from user.models import User
 from payment.models import Payment
 from help.models import Help
+
 
 
 def CheckInAPI(request, *args, **kwargs):
@@ -16,7 +18,7 @@ def CheckInAPI(request, *args, **kwargs):
                 return HttpResponse("You are already in")
             else: 
                 parkloc = request.POST.get('location')
-                t = Ticket(userID = user_id, location = parkloc)
+                t = Ticket(userID = User.objects.get(userID=user_id), location = Lot.objects.get(lotName=parkloc))
                 t.save()
                 output = {
                     'ticketID' : str(t.ticketID),
@@ -27,7 +29,7 @@ def CheckInAPI(request, *args, **kwargs):
         else:
             return HttpResponse("You're not allowed to park here")
     else:
-        return HttpResponse("Hello")
+        return HttpResponseForbidden()
 
 def CheckOutAPI(request, *args, **kwargs):
     if (request.method == 'POST'):
@@ -35,35 +37,39 @@ def CheckOutAPI(request, *args, **kwargs):
         if (Ticket.objects.filter(userID=user_id, exitTime__isnull=True)):
             t = Ticket.objects.get(userID=user_id, exitTime__isnull=True)
             t.exitTime = datetime.datetime.now()
-            t.save()    
-            u = User.objects.get(userID=user_id)
-            resp = PaymentAPI(t.ticketID)
+            t.save()
+            print(t)
+            resp = PaymentAPI(t)
             return resp
         else: 
             return HttpResponse("You have not checked in yet")
     else:
-        return HttpResponse("Denied")
+        return HttpResponseForbidden()
 
-def PaymentAPI(ticket_id, *args, **kwargs):
-    t = Ticket.objects.get(ticketID=ticket_id)
-    u = User.objects.get(userID = t.userID)
-    price = 2000
-    dur = (t.exitTime-t.entryTime).seconds//3600 
-    remain = (t.exitTime-t.entryTime).seconds%3600 
-    print(dur)
-    total = dur*price 
-    if (remain):
-        total += price
-    if (u.userBalance >= total):
-        u.userBalance = u.userBalance - total
-        u.save()
-        p = Payment(userID = t.userID, ticketID=ticket_id, duration=dur, amount=total)
-        p.save()
-        return HttpResponse("Payment successfull, you have IDR" + str(u.userBalance) + " left")
+def PaymentAPI(ticket, *args, **kwargs):
+    u   = User.objects.get(userID = ticket.userID.userID)
+    if (not u):
+        return HttpResponse("error")
     else:
-        t.exitTime = None
-        t.save()
-        return HttpResponse("Your balance is not sufficient, Amount = " + str(total))
+        price   = 2000
+        dur     = (ticket.exitTime-ticket.entryTime).seconds//3600 
+        remain  = (ticket.exitTime-ticket.entryTime).seconds%3600 
+
+        print(dur)
+        total = dur*price 
+
+        if (remain):
+            total += price
+        if (u.userBalance >= total):
+            u.userBalance = u.userBalance - total
+            u.save()
+            p = Payment(userID = ticket.userID, ticketID=Ticket.objects.get(ticketID = ticket.ticketID), duration=dur, amount=total)
+            p.save()
+            return HttpResponse("Payment successfull, you have IDR" + str(u.userBalance) + " left")
+        else:
+            ticket.exitTime = None
+            ticket.save()
+            return HttpResponse("Your balance is not sufficient, Amount = " + str(total))
 
 def AskHelpAPI(request, *args, **kwargs):
     # API to handle POST Request asking a question or help
@@ -81,13 +87,14 @@ def AskHelpAPI(request, *args, **kwargs):
                 }
                 return HttpResponse(json.dumps(output))
             except:
-                return HttpResponse("User not registered")
+                return HttpResponseBadRequest("User not registered")
         else:
-            return HttpResponse("No questions asked")
+            return HttpResponseBadRequest("No questions asked")
     else:
         return HttpResponseForbidden()
 
 def AnswerHelpAPI(request, *args, **kwargs):
+    #API to handle POST Request answering a question or help
     if (request.method == 'POST'):
         answer = request.POST.get('answer')
         help_id = request.POST.get('helpID')
@@ -104,8 +111,8 @@ def AnswerHelpAPI(request, *args, **kwargs):
                 }
                 return HttpResponse(json.dumps(output))
             except: 
-                return HttpResponse("Help ID not valid")
+                return HttpResponseBadRequest("Help ID not valid")
         else:
-            return HttpResponse("No answer is given")
+            return HttpResponseBadRequest("No answer is given")
     else:
         return HttpResponse("Hello")
