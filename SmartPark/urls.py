@@ -23,6 +23,8 @@ from api.views import AddDisaster
 from api.views import UpdateDisaster
 from api.views import getCapacity
 from api.views import CheckInLotAPI
+from api.views import paymentReport
+
 
 urlpatterns = [
     path('checkin', CheckInAPI),
@@ -34,5 +36,7 @@ urlpatterns = [
     path('adddisaster', AddDisaster),
     path('updatedisaster', UpdateDisaster),
     path('capacity', getCapacity),
+    path('paymentreport', paymentReport),
+    
 
 ]

@@ -1,5 +1,6 @@
 from django.conf import settings
 import json, datetime
+from django.core import serializers
 from django.core.mail import send_mail
 from django.http import HttpResponse
 from django.http import HttpResponseForbidden, HttpResponseBadRequest
@@ -232,6 +233,19 @@ def getCapacity(request, *args, **kwargs):
     else:
         return HttpResponse("Hello")
             
+#blm jadi nih wkwk
+def paymentReport(request, *args, **kwargs):
+    if (request.method == 'GET'):
+        startdate   = datetime.datetime.strptime(request.GET.get('startdate'), '%Y-%m-%d')
+        enddate     = datetime.datetime.strptime(request.GET.get('enddate'), '%Y-%m-%d')
+        p = Payment.objects.filter(paymentTime__range=(startdate, enddate))
+        if (p):
+            p_json = serializers.serialize('json', p)
+            return HttpResponse(p_json, content_type='application/json')
+        else: 
+            return HttpResponse("Date Name not valid")
+    else:
+        return HttpResponse("Hello")
 
 #Yang perlu dikerjain
 #1. Location tuh perlu ada koordinat gitu biar bisa dikasih navigasi
