@@ -12,7 +12,6 @@ from user.models import User
 from payment.models import Payment
 from help.models import Help
 from disaster.models import Disaster
-from parkingLot.models import Lot
 
 
 def CheckInAPI(request, *args, **kwargs):
@@ -55,12 +54,19 @@ def CheckOutAPI(request, *args, **kwargs):
     #Needed parameters: userID
     if (request.method == 'POST'):
         user_id = request.POST.get('userID')
-        u = User.objects.get(userID = user_id)
-        if (Ticket.objects.filter(userID=u, exitTime__isnull=True)):
-            t = Ticket.objects.get(userID=u, exitTime__isnull=True)
+        
+        #Find ticket and set exit time
+        if (Ticket.objects.filter(userID=user_id, exitTime__isnull=True)):
+            t = Ticket.objects.get(userID=user_id, exitTime__isnull=True)
             t.exitTime = datetime.datetime.now()
             t.save()
-            print(t)
+            
+            # Add back capacity for Sipil or SR 
+            loc_obj = t.location
+            if (loc_obj.lotName == "Sipil" or loc_obj.lotName == "SR"):
+                loc_obj.capacity += 1
+                loc_obj.save()
+                
             resp = __PaymentAPI(t)
             return resp
         else: 
@@ -86,11 +92,8 @@ def __PaymentAPI(ticket, *args, **kwargs):
             u.userBalance = u.userBalance - total
             u.save()
             p = Payment(userID = ticket.userID, ticketID=Ticket.objects.get(ticketID = ticket.ticketID), duration=dur, amount=total)
-            loc_obj = ticket.location
-            loc_obj.capacity += 1
-            loc_obj.save()
             p.save()
-            return HttpResponse("Payment successfull, you have IDR" + str(u.userBalance) + " left")
+            return HttpResponse("Payment successfull, you have IDR " + str(u.userBalance) + " left")
         else:
             ticket.exitTime = None
             ticket.save()
