@@ -19,15 +19,10 @@ from api.views import CheckInAPI
 from api.views import CheckOutAPI
 from api.views import AskHelpAPI
 from api.views import AnswerHelpAPI
-<<<<<<< Updated upstream
-from api.views import CheckInLotAPI
-=======
 from api.views import AddDisaster
 from api.views import UpdateDisaster
 from api.views import getCapacity
-
->>>>>>> Stashed changes
-
+from api.views import CheckInLotAPI
 
 urlpatterns = [
     path('checkin', CheckInAPI),
@@ -35,12 +30,9 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('askhelp', AskHelpAPI),
     path('answerhelp', AnswerHelpAPI),
-<<<<<<< Updated upstream
     path('lot/checkin', CheckInLotAPI),
-=======
     path('adddisaster', AddDisaster),
     path('updatedisaster', UpdateDisaster),
     path('getcapacity', getCapacity),
 
->>>>>>> Stashed changes
 ]

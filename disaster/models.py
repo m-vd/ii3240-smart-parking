@@ -9,8 +9,5 @@ class Disaster(models.Model):
     disasterTime  = models.DateTimeField(auto_now_add=True)
     location      = models.ManyToManyField(Lot,blank=True)
     status        = models.CharField(max_length=30)
-<<<<<<< Updated upstream
     description   = models.CharField(max_length=100)
-=======
-    description = models.CharField(max_length=100, null=True)
->>>>>>> Stashed changes
+
