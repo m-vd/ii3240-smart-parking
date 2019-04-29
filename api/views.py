@@ -1,4 +1,6 @@
+from django.conf import settings
 import json, datetime
+from django.core.mail import send_mail
 from django.http import HttpResponse
 from django.http import HttpResponseForbidden, HttpResponseBadRequest
 from django.shortcuts import render
@@ -25,6 +27,12 @@ def CheckInAPI(request, *args, **kwargs):
                     'entryTime' : str(t.entryTime),
                     'exitTime' : str(t.exitTime),
                 }
+                subject = 'You just check In!'
+                message = 'Welcome to ITB! \n You just park your motorcycle at ' + str(t.location.lotName) + '\n The parking will cost you IDR2000 perhour'
+                from_email = settings.EMAIL_HOST_USER
+                to_list = [t.userID.userEmail]
+
+                send_mail(subject,message,from_email,to_list,fail_silently=True)
                 return HttpResponse(json.dumps(output))
         else:
             return HttpResponse("You're not allowed to park here")
@@ -116,3 +124,4 @@ def AnswerHelpAPI(request, *args, **kwargs):
             return HttpResponseBadRequest("No answer is given")
     else:
         return HttpResponse("Hello")
+
