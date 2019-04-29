@@ -52,11 +52,19 @@ def CheckOutAPI(request, *args, **kwargs):
     #Needed parameters: userID
     if (request.method == 'POST'):
         user_id = request.POST.get('userID')
+        
+        #Find ticket and set exit time
         if (Ticket.objects.filter(userID=user_id, exitTime__isnull=True)):
             t = Ticket.objects.get(userID=user_id, exitTime__isnull=True)
             t.exitTime = datetime.datetime.now()
             t.save()
-            print(t)
+            
+            # Add back capacity for Sipil or SR 
+            loc_obj = t.location
+            if (loc_obj.lotName == "Sipil" or loc_obj.lotName == "SR"):
+                loc_obj.capacity += 1
+                loc_obj.save()
+                
             resp = __PaymentAPI(t)
             return resp
         else: 
@@ -82,9 +90,6 @@ def __PaymentAPI(ticket, *args, **kwargs):
             u.userBalance = u.userBalance - total
             u.save()
             p = Payment(userID = ticket.userID, ticketID=Ticket.objects.get(ticketID = ticket.ticketID), duration=dur, amount=total)
-            loc_obj = ticket.location
-            loc_obj.capacity += 1
-            loc_obj.save()
             p.save()
             return HttpResponse("Payment successfull, you have IDR" + str(u.userBalance) + " left")
         else:
@@ -138,7 +143,6 @@ def AnswerHelpAPI(request, *args, **kwargs):
     else:
         return HttpResponse("Hello")
 
-<<<<<<< HEAD
 def CheckInLotAPI(request, *args, **kwargs):
     #API to add or remove capacity per Lot.
     if (request.method == 'POST'):
@@ -152,5 +156,3 @@ def CheckInLotAPI(request, *args, **kwargs):
 
     else:
         return HttpResponseForbidden()
-=======
->>>>>>> 19ab2317a63adb28052f2d4f05c58f99d122a194
