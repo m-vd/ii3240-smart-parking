@@ -1,5 +1,6 @@
 import json, datetime
 from django.http import HttpResponse
+from django.http import HttpResponseForbidden
 from django.shortcuts import render
 from ticketing.models import Ticket 
 from user.models import User
@@ -65,40 +66,46 @@ def PaymentAPI(ticket_id, *args, **kwargs):
         return HttpResponse("Your balance is not sufficient, Amount = " + str(total))
 
 def AskHelpAPI(request, *args, **kwargs):
+    # API to handle POST Request asking a question or help
     if (request.method == 'POST'):
-        user_id = request.POST.get('userID')
         question = request.POST.get('question')
-        u = User.objects.get(userID = user_id)
-        if (u):
-            h = Help(user=u, question = question)
-            h.save()
-            output = {
-                'helpID' : str(h.helpID),
-                'userID' : str(h.user.userID),
-                'question' : str(h.question),
-            }
-            return HttpResponse(json.dumps(output))
-        else: 
-            return HttpResponse("User not registered")
+        if (question):
+            try:
+                u = User.objects.get(userID = request.POST.get('userID'))
+                h = Help(user = u, question = question)
+                h.save()
+                output = {
+                    'helpID' : str(h.helpID),
+                    'userID' : str(h.user.userID),
+                    'question' : str(h.question),
+                }
+                return HttpResponse(json.dumps(output))
+            except:
+                return HttpResponse("User not registered")
+        else:
+            return HttpResponse("No questions asked")
     else:
-        return HttpResponse("Hello")
+        return HttpResponseForbidden()
 
 def AnswerHelpAPI(request, *args, **kwargs):
     if (request.method == 'POST'):
-        help_id = request.POST.get('helpID')
         answer = request.POST.get('answer')
-        h = Help.objects.get(helpID = help_id)
-        if (h):
-            h.answer = answer
-            h.answerTime = datetime.datetime.now()
-            h.save()
-            output = {
-                'helpID' : str(h.helpID),
-                'question' : str(h.user.userID),
-                'answer' : str(h.question),
-            }
-            return HttpResponse(json.dumps(output))
-        else: 
-            return HttpResponse("Help ID not valid")
+        help_id = request.POST.get('helpID')
+        if (answer):
+            try:
+                h = Help.objects.get(helpID = help_id)
+                h.answer = answer
+                h.answerTime = datetime.datetime.now()
+                h.save()
+                output = {
+                    'helpID' : str(h.helpID),
+                    'question' : str(h.question),
+                    'answer' : str(h.answer),
+                }
+                return HttpResponse(json.dumps(output))
+            except: 
+                return HttpResponse("Help ID not valid")
+        else:
+            return HttpResponse("No answer is given")
     else:
         return HttpResponse("Hello")
