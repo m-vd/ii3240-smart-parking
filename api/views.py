@@ -25,7 +25,6 @@ def CheckInAPI(request, *args, **kwargs):
                 return HttpResponse("You are already in")
             else: 
                 parkloc = request.POST.get('location')
-<<<<<<< Updated upstream
                 lot = Lot.objects.get(lotName=parkloc)
                 t = Ticket(userID = User.objects.get(userID=user_id), location = lot)
                 
@@ -34,14 +33,6 @@ def CheckInAPI(request, *args, **kwargs):
                     lot.save()
                 t.save()
                 
-=======
-                u = User.objects.get(userID = user_id)
-                l = Lot.objects.get(lotName = parkloc)  
-                t = Ticket(userID = u, location = l)
-                t.save()
-                l.capacity=l.capacity-1
-                l.save()
->>>>>>> Stashed changes
                 output = {
                     'ticketID' : str(t.ticketID),
                     'entryTime' : str(t.entryTime),
@@ -68,45 +59,19 @@ def CheckOutAPI(request, *args, **kwargs):
         if (Ticket.objects.filter(userID=u, exitTime__isnull=True)):
             t = Ticket.objects.get(userID=u, exitTime__isnull=True)
             t.exitTime = datetime.datetime.now()
-<<<<<<< Updated upstream
             t.save()
             print(t)
             resp = __PaymentAPI(t)
-=======
-            t.save()    
-            l = t.location
-            l.capacity=l.capacity+1            
-            l.save()            
-            resp = PaymentAPI(t)
->>>>>>> Stashed changes
             return resp
         else: 
             return HttpResponse("You have not checked in yet")
     else:
         return HttpResponseForbidden()
 
-<<<<<<< Updated upstream
 def __PaymentAPI(ticket, *args, **kwargs):
     u   = User.objects.get(userID = ticket.userID.userID)
     if (not u):
         return HttpResponse("error")
-=======
-def PaymentAPI(t, *args, **kwargs):
-    u = t.userID
-    price = 2000
-    dur = (t.exitTime-t.entryTime).seconds//3600 
-    remain = (t.exitTime-t.entryTime).seconds%3600 
-    print(dur)
-    total = dur*price 
-    if (remain):
-        total += price
-    if (u.userBalance >= total):
-        u.userBalance = u.userBalance - total
-        u.save()
-        p = Payment(userID = u, ticketID=t, duration=dur, amount=total)
-        p.save()
-        return HttpResponse("Payment successfull! \nIDR " + str(total) + " is deduced from your account\nYou have IDR" + str(u.userBalance) + " left")
->>>>>>> Stashed changes
     else:
         price   = 2000
         dur     = (ticket.exitTime-ticket.entryTime).seconds//3600 
@@ -189,11 +154,7 @@ def CheckInLotAPI(request, *args, **kwargs):
             return HttpResponseBadRequest()
 
     else:
-<<<<<<< Updated upstream
         return HttpResponseForbidden()
-        
-=======
-        return HttpResponse("Hello")
 
 def AddDisaster(request, *args, **kwargs):
     if (request.method == 'POST'):
@@ -258,4 +219,3 @@ def getCapacity(request, *args, **kwargs):
 #5. Add booking
 #6. Manage booking
 #7. Navigate
->>>>>>> Stashed changes
