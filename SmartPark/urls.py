@@ -28,8 +28,6 @@ from api.views import AddBookingAPI
 from api.views import updateBookingAPI
 
 
-
-
 urlpatterns = [
     path('checkin', CheckInAPI),
     path('checkout', CheckOutAPI),
