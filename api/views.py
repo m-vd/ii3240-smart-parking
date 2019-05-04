@@ -15,6 +15,11 @@ from booking.models import Booking
 from help.models import Help
 from disaster.models import Disaster
 
+def CheckLot(lot):
+    if (lot.lotID == "Motor_Sipil" or lot.lotID == "Motor_SR" or lot.lotID == "Mobil_SR"):
+        lot.capacity -= 1
+        lot.save()
+    
 
 def CheckInAPI(request, *args, **kwargs):
     #API to check in to park
@@ -29,9 +34,7 @@ def CheckInAPI(request, *args, **kwargs):
                 lot = Lot.objects.get(lotID=location_id)
                 t = Ticket(user = (User.objects.get(userID = user_id)), location = lot)
                 
-                if (lot.lotID == "Motor_Sipil" or lot.lotID == "Motor_SR" or lot.lotID == "Mobil_SR"):
-                    lot.capacity -= 1
-                    lot.save()
+                CheckLot(lot)
                 t.save()
 
                 #Send Check In Notification
@@ -67,37 +70,44 @@ def CheckOutAPI(request, *args, **kwargs):
             
             # Add back capacity for Sipil or SR 
             loc_obj = t.location
-            if (loc_obj.lotID == "Motor_Sipil" or loc_obj.lotID == "Motor_SR" or loc_obj.lotID == "Mobil_SR"):
-                loc_obj.capacity += 1
-                loc_obj.save()
-                
-            resp = __PaymentAPI(t)
+            CheckLot(loc_obj)
+
+            #Change booking status if the lot was booked
+            if (Booking.objects.filter(user=user_id, status="Check In")):
+                b = Booking.objects.get(user=user_id, status="Check In")
+                b.status = "Checked Out"
+                b.save()
+            
+            resp = __Payment(t)
             return resp
         else: 
             return HttpResponse("You have not checked in yet")
     else:
         return HttpResponseForbidden()
 
-def __PaymentAPI(ticket, *args, **kwargs):
+def __Payment(ticket, *args, **kwargs):
     u   = User.objects.get(userID = ticket.user.userID)
     if (not u):
         return HttpResponse("error")
     else:
-        price   = 2000
-        dur     = (ticket.exitTime-ticket.entryTime).seconds//3600 
-        remain  = (ticket.exitTime-ticket.entryTime).seconds%3600 
+        #Set daily price
+        if (ticket.location.lotID == "Motor_Sipil" or ticket.location.lotID == "Motor_SR"):        
+            dailyPrice  = 2000
+        elif (ticket.location.lotID == "Mobil_SR"):
+            dailyPrice = 5000
+        else: 
+            dailyPrice = 0
+        #Duration is defined as days that the parking lot is utilized
+        dur     = (ticket.exitTime-ticket.entryTime).days 
+        #Duration + 1 since the price is counted since day 0
+        total   = (dur+1)*dailyPrice
 
-        print(dur)
-        total = dur*price 
-
-        if (remain):
-            total += price
         if (u.userBalance >= total):
             u.userBalance = u.userBalance - total
             u.save()
             p = Payment(userID = ticket.user, ticketID=Ticket.objects.get(ticketID = ticket.ticketID), duration=dur, amount=total)
             p.save()
-            return HttpResponse("Payment successfull, you have IDR " + str(u.userBalance) + " left")
+            return HttpResponse(("You paid IDR {:,} \n Payment successfull, you have IDR {:,} left").format(total, u.userBalance))
         else:
             ticket.exitTime = None
             ticket.save()
@@ -286,12 +296,12 @@ def AddBookingAPI(request, *args, **kwargs):
                     lot.capacity -= 1
                     lot.save()
                 b.save()
-                u.userBalance = u.userBalance -  bookingPrice
+                u.userBalance = u.userBalance - bookingPrice
                 u.save()
 
                 #Send Check In Notification
                 subject = 'Your booking are reserved!'
-                message = 'Congratulations! \nYour booking at ' + str(b.location.lotName) + ' is reserve from ' + b.bookingTime + ' until 1 hour after that. \nThe booking will cost you IDR 5,000 exclude parking fees.'        
+                message = 'Congratulations! \nYour booking at ' + str(b.location.lotName) + ' is reserved from ' + b.bookingTime + ' until 1 hour after that. \nThe booking will cost you IDR 5,000 exclude parking fees.'        
                 to_list = [b.user.userEmail]
                 send_mail(subject,message,settings.EMAIL_HOST_USER,to_list,fail_silently=True)
 
