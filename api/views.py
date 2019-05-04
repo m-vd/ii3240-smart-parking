@@ -260,16 +260,16 @@ def generateReport(request, *args, **kwargs):
         else:
             enddate = None
         
-        if (category=="payment"):   
+        if (category=="payment"): 
+            print(startdate, enddate)
             obj = Payment.objects.filter(paymentTime__range=(startdate, enddate))
-
         elif (category=="parking"):
-            u = User.objects.get (UserID = request.GET.get('userID')) 
-            l = Lot.objects.get(LotID = request.GET.get('lotID'))
-            obj = Ticket.objects.filter(paymentTime__range=(startdate, enddate), location=l, user=u)
-
+            u = User.objects.get(userID = request.GET.get('userID')) 
+            l = Lot.objects.get(lotID = request.GET.get('lotID'))
+            obj = Ticket.objects.filter(entryTime__range=(startdate, enddate), location=l, user=u)
         else: 
             return HttpResponse("Category is not valid")
+
 
         if (obj):
             obj_json = serializers.serialize('json', obj)
