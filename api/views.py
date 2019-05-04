@@ -107,7 +107,7 @@ def __Payment(ticket, *args, **kwargs):
             u.save()
             p = Payment(userID = ticket.user, ticketID=Ticket.objects.get(ticketID = ticket.ticketID), duration=dur, amount=total)
             p.save()
-            return HttpResponse("You paid IDR " + str(total) + "\n Payment successfull, you have IDR " + str(u.userBalance) + " left")
+            return HttpResponse(("You paid IDR {:,} \n Payment successfull, you have IDR {:,} left").format(total, u.userBalance))
         else:
             ticket.exitTime = None
             ticket.save()
