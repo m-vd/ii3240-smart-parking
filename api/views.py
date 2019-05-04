@@ -247,6 +247,40 @@ def paymentReport(request, *args, **kwargs):
     else:
         return HttpResponse("Hello")
 
+def AddBookingAPI(request, *args, **kwargs):
+    #API to check in to park
+    #Needed parameters: userID and locationID
+    if (request.method == 'POST'):
+        user_id = request.POST.get('userID')
+        if (User.objects.filter(userID=user_id)):
+            location_id = request.POST.get('locationID')
+            lot = Lot.objects.get(lotID=location_id)
+            time = request.POST.get('bookingTime')
+            b = Booking(user = (User.objects.get(userID = user_id)), location = lot, bookingTime= time)
+            
+            if (lot.lotID == "Motor_Sipil" or lot.lotID == "Motor_SR" or lot.lotID == "Mobil_SR"):
+                lot.capacity -= 1
+                lot.save()
+            b.save()
+
+            #Send Check In Notification
+            subject = 'Your booking are reserved!'
+            message = 'Congratulations! \n Your booking at ' + str(t.location.lotName) + ' is reserve from ' + Booking.bookingTime + ' until 1 hour after that. \n The booking will cost you IDR 5,000 exclude parking fees.'        
+            to_list = [t.user.userEmail]
+            send_mail(subject,message,settings.EMAIL_HOST_USER,to_list,fail_silently=True)
+
+            #Generate output               
+            output = {
+                'ticketID' : str(t.ticketID),
+                'entryTime' : str(t.entryTime),
+                'exitTime' : str(t.exitTime),
+            }
+            return HttpResponse(json.dumps(output))
+        else:
+            return HttpResponse("You're not allowed to make booking")
+    else:
+        return HttpResponseForbidden()
+
 #Yang perlu dikerjain
 #1. Location tuh perlu ada koordinat gitu biar bisa dikasih navigasi
 #4. Generate Laporan
