@@ -11,6 +11,7 @@ from ticketing.models import Ticket
 from parkingLot.models import Lot
 from user.models import User
 from payment.models import Payment
+from booking.models import Booking
 from help.models import Help
 from disaster.models import Disaster
 
@@ -252,32 +253,55 @@ def AddBookingAPI(request, *args, **kwargs):
     #Needed parameters: userID and locationID
     if (request.method == 'POST'):
         user_id = request.POST.get('userID')
-        if (User.objects.filter(userID=user_id)):
+        u = User.objects.get(userID=user_id)
+        if (User.objects.filter(userID=user_id) and not Booking.objects.filter(user=u, status = "Reserved")):
             location_id = request.POST.get('locationID')
             lot = Lot.objects.get(lotID=location_id)
             time = request.POST.get('bookingTime')
-            b = Booking(user = (User.objects.get(userID = user_id)), location = lot, bookingTime= time)
-            
-            if (lot.lotID == "Motor_Sipil" or lot.lotID == "Motor_SR" or lot.lotID == "Mobil_SR"):
-                lot.capacity -= 1
-                lot.save()
-            b.save()
+            bookingPrice = 5000
+            if (u.userBalance >= bookingPrice) and (lot.capacity>0):
+                b = Booking(user = (User.objects.get(userID = user_id)), location = lot, bookingTime= time, status="Reserved")
+                if (lot.lotID == "Motor_Sipil" or lot.lotID == "Motor_SR" or lot.lotID == "Mobil_SR"):
+                    lot.capacity -= 1
+                    lot.save()
+                b.save()
+                u.userBalance = u.userBalance -  bookingPrice
+                u.save()
 
-            #Send Check In Notification
-            subject = 'Your booking are reserved!'
-            message = 'Congratulations! \n Your booking at ' + str(t.location.lotName) + ' is reserve from ' + Booking.bookingTime + ' until 1 hour after that. \n The booking will cost you IDR 5,000 exclude parking fees.'        
-            to_list = [t.user.userEmail]
-            send_mail(subject,message,settings.EMAIL_HOST_USER,to_list,fail_silently=True)
+                #Send Check In Notification
+                subject = 'Your booking are reserved!'
+                message = 'Congratulations! \nYour booking at ' + str(b.location.lotName) + ' is reserve from ' + b.bookingTime + ' until 1 hour after that. \nThe booking will cost you IDR 5,000 exclude parking fees.'        
+                to_list = [b.user.userEmail]
+                send_mail(subject,message,settings.EMAIL_HOST_USER,to_list,fail_silently=True)
 
-            #Generate output               
-            output = {
-                'ticketID' : str(t.ticketID),
-                'entryTime' : str(t.entryTime),
-                'exitTime' : str(t.exitTime),
-            }
-            return HttpResponse(json.dumps(output))
+                #Generate output               
+                output = {
+                    'ticketID' : str(b.bookingID),
+                    'bookingTime' : str(b.bookingTime),
+                    'location' : str(b.location.lotName),
+                }
+                return HttpResponse(json.dumps(output))
+            else:
+                return HttpResponse("Booking failed")
         else:
             return HttpResponse("You're not allowed to make booking")
+    else:
+        return HttpResponseForbidden()
+
+def updateBookingAPI(request, *args, **kwargs):
+    #API to checkout
+    #Needed parameters: userID
+    if (request.method == 'POST'):
+        user_id = request.POST.get('userID')
+        
+        #Find booking and set status
+        if (Booking.objects.filter(user=user_id, status="Reserved")):
+            b = Booking.objects.get(user=user_id, status="Reserved")
+            b.status = "Check In"
+            b.save()
+            return HttpResponse("Booking status updated!") 
+        else: 
+            return HttpResponse("You have not booked yet")
     else:
         return HttpResponseForbidden()
 
