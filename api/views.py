@@ -235,18 +235,39 @@ def getCapacity(request, *args, **kwargs):
         return HttpResponse("Hello")
             
 #blm jadi nih wkwk
-def paymentReport(request, *args, **kwargs):
+def generateReport(request, *args, **kwargs):
     if (request.method == 'GET'):
-        startdate   = datetime.datetime.strptime(request.GET.get('startdate'), '%Y-%m-%d')
-        enddate     = datetime.datetime.strptime(request.GET.get('enddate'), '%Y-%m-%d')
-        p = Payment.objects.filter(paymentTime__range=(startdate, enddate))
-        if (p):
-            p_json = serializers.serialize('json', p)
-            return HttpResponse(p_json, content_type='application/json')
+        category = request.GET.get('category')
+    
+        start_date   = request.GET.get('startdate')
+        end_date     = request.GET.get('enddate')
+        if (start_date): 
+            startdate   = datetime.datetime.strptime(start_date, '%Y-%m-%d')
+        else:
+            startdate = None
+        if (end_date):
+            enddate     = datetime.datetime.strptime(end_date, '%Y-%m-%d')
+        else:
+            enddate = None
+        
+        if (category=="payment"):   
+            obj = Payment.objects.filter(paymentTime__range=(startdate, enddate))
+
+        elif (category=="parking"):
+            u = User.objects.get (UserID = request.GET.get('userID')) 
+            l = Lot.objects.get(LotID = request.GET.get('lotID'))
+            obj = Ticket.objects.filter(paymentTime__range=(startdate, enddate), location=l, user=u)
+
+        else: 
+            return HttpResponse("Category is not valid")
+
+        if (obj):
+            obj_json = serializers.serialize('json', obj)
+            return HttpResponse(obj_json, content_type='application/json')
         else: 
             return HttpResponse("Date Name not valid")
     else:
-        return HttpResponse("Hello")
+        return HttpResponse("GET Request Only")
 
 def AddBookingAPI(request, *args, **kwargs):
     #API to check in to park

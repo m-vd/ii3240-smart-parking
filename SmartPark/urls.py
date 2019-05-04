@@ -23,7 +23,7 @@ from api.views import AddDisaster
 from api.views import UpdateDisaster
 from api.views import getCapacity
 from api.views import CheckInLotAPI
-from api.views import paymentReport
+from api.views import generateReport
 from api.views import AddBookingAPI
 from api.views import updateBookingAPI
 
@@ -40,7 +40,7 @@ urlpatterns = [
     path('adddisaster', AddDisaster),
     path('updatedisaster', UpdateDisaster),
     path('capacity', getCapacity),
-    path('paymentreport', paymentReport),
+    path('generatereport', generateReport),
     path('addBooking', AddBookingAPI),
     path('updateBooking', updateBookingAPI),
 
