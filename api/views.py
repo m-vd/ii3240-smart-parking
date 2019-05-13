@@ -270,7 +270,6 @@ def generateReport(request, *args, **kwargs):
         else: 
             return HttpResponse("Category is not valid")
 
-
         if (obj):
             obj_json = serializers.serialize('json', obj)
             return HttpResponse(obj_json, content_type='application/json')
@@ -335,6 +334,11 @@ def updateBookingAPI(request, *args, **kwargs):
             return HttpResponse("You have not booked yet")
     else:
         return HttpResponseForbidden()
+
+
+CRON_CLASSES = [
+    "my_app.cron.MyCronJob",
+]
 
 #Yang perlu dikerjain
 #1. Location tuh perlu ada koordinat gitu biar bisa dikasih navigasi

@@ -46,6 +46,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django.contrib.humanize',
+    'django_cron',
 
     #own
     'ticketing',
@@ -87,6 +88,9 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'SmartPark.wsgi.application'
+CRON_CLASSES = [
+    "SmartPark.cron.MyCronJob",
+]
 
 
 # Database
