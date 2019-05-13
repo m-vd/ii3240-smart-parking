@@ -7,6 +7,7 @@ def index(request):
 #	return HttpResponse("Hello")
 	context = None;
 	return render(request, 'userfe/index.html', context)
+
 def faq(request):
 	context = None;
 	return render(request, 'userfe/faq.html', context)
@@ -50,3 +51,4 @@ def countSlot(request, *args, **kwargs):
 		'mobil_sr' : slot_sr_mobil,
 	}
 	return render(request, 'userfe/index.html', {'slot': slot})
+

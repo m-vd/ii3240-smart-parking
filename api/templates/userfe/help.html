@@ -32,8 +32,10 @@
 			
 			<div class=question style="width: 360px;">
 			<center>
-				<form action="/">
-					<input type="text" id="fname" name="firstname" placeholder="Tanyakan sesuatu">
+				<form action="/askhelp" method="post">
+					{% csrf_token %}
+					<input type="text" id="question" name="question" placeholder="Tanyakan sesuatu">
+					<input type="text" id="userID" name="userID"><br><br>
 					<input type="submit" value="Submit">
 				</form>
 			</center>
