@@ -170,11 +170,30 @@ def CheckInLotAPI(request, *args, **kwargs):
             lot_obj = Lot.objects.get(lotID = location_id)
             lot_obj.capacity -= 1
             lot_obj.save()
+            return HttpResponse(str(lot_obj.lotName)+" capacity -1 to "+str(lot_obj.capacity))
         else:
             return HttpResponseBadRequest()
 
     else:
         return HttpResponseForbidden()
+
+def CheckOutLotAPI(request, *args, **kwargs):
+    #API to add or remove capacity per Lot.
+    #required parameters: location ID
+    if (request.method == 'POST'):
+        location_id = request.POST.get('locationID')
+        if (location_id):
+            lot_obj = Lot.objects.get(lotID = location_id)
+            lot_obj.capacity += 1
+            lot_obj.save()
+            return HttpResponse(str(lot_obj.lotName)+" capacity +1 to "+str(lot_obj.capacity))
+        else:
+            return HttpResponseBadRequest()
+
+    else:
+        return HttpResponseForbidden()
+
+        
 
 def AddDisaster(request, *args, **kwargs):
     #required parameter: locationID, status, description

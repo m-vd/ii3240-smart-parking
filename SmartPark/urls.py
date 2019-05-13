@@ -23,6 +23,7 @@ from api.views import AddDisaster
 from api.views import UpdateDisaster
 from api.views import getCapacity
 from api.views import CheckInLotAPI
+from api.views import CheckOutLotAPI
 from api.views import generateReport
 from api.views import AddBookingAPI
 from api.views import updateBookingAPI
@@ -42,6 +43,7 @@ urlpatterns = [
     path('askhelp', AskHelpAPI),
     path('answerhelp', AnswerHelpAPI),
     path('lot/checkin', CheckInLotAPI),
+    path('lot/checkout', CheckOutLotAPI),
     path('adddisaster', AddDisaster),
     path('updatedisaster', UpdateDisaster),
     path('capacity', getCapacity),
@@ -50,7 +52,6 @@ urlpatterns = [
     path('updateBooking', updateBookingAPI),
     path('get',countTicketSipil),
     path('get',countTicketSR),
-    path('admin/', admin.site.urls),
     path('home', HomeView.as_view()),
     path('accident', AccidentView.as_view()), 
 
