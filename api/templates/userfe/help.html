@@ -1,0 +1,63 @@
+<!-- smpark/templates/book.html -->
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+{% if user.is_authenticated %}
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>Smart Parking ITB</title>
+		<link rel="stylesheet" type="text/css" href="{% static 'general.css' %}">
+    </head>
+	<body>
+		<div class=container>
+			<svg xmlns="http://www.w3.org/2000/svg" width="12.707" height="11.414" viewBox="0 0 12.707 11.414">
+				<g id="Group_8" data-name="Group 8" transform="translate(0.707 0.707)"><a href="/">
+					<line id="Line_11" data-name="Line 11" x1="12" transform="translate(0 5)" fill="none" stroke="#707070" stroke-width="2"/>
+					<line id="Line_13" data-name="Line 13" x1="5" y2="5" fill="none" stroke="#707070" stroke-width="2"/>
+					<line id="Line_14" data-name="Line 14" x1="5" y1="5" transform="translate(0 5)" fill="none" stroke="#707070" stroke-width="2"/>
+				</a></g>
+			</svg>
+
+			<div class=header>
+				<svg xmlns="http://www.w3.org/2000/svg" width="360" height="45" viewBox="0 0 327 45">
+					<text id="Welcome_to_Campvibes_" data-name="Welcome to Campvibes!" fill="#254f6e" font-size="26" font-family="SegoeUI-Bold, Segoe UI" font-weight="700"><tspan x="90.94" y="28">Help Center</tspan></text>
+				</svg>
+				<svg xmlns="http://www.w3.org/2000/svg" width="360" height="20" viewBox="0 0 88 20">
+					<line id="blue_divider_line" data-name="blue divider line" x2="88" transform="translate(0 1)" fill="none" stroke="#000" stroke-width="2"/>
+				</svg>
+			</div>
+			
+			<div class=question style="width: 360px;">
+			<center>
+				<form action="/">
+					<input type="text" id="fname" name="firstname" placeholder="Tanyakan sesuatu">
+					<input type="submit" value="Submit">
+				</form>
+			</center>
+			</div>
+			
+			<div class=teks style="margin-top: 40px;">
+				<svg xmlns="http://www.w3.org/2000/svg" width="360" height="167" viewBox="0 0 258 167">
+					<text id="Welcome_to_Campvibes_" data-name="Welcome to Campvibes!" fill="#254f6e" font-size="12" font-family="SegoeUI, Segoe UI"><tspan x="6.431" y="13">Kami akan berusaha semampu mungkin untuk </tspan><tspan x="20.133" y="29">menjawab pertanyaan dan keluhan anda!</tspan><tspan x="129" y="45"></tspan><tspan x="29.968" y="61">Kami akan mengirimkan jawaban dari </tspan><tspan x="12.639" y="77">pertanyaan dan keluhan anda melalui email, </tspan><tspan x="11.675" y="93">untuk kenyamanan, harap nyalakan notifkasi </tspan><tspan x="100.058" y="109">email anda</tspan><tspan x="129" y="125"></tspan><tspan x="13.778" y="141">Pertanyaan yang sering berulang akan kami </tspan><tspan x="10.409" y="157">simpan di laman Frequently Asked Ques</tspan><tspan y="157" font-family="SegoeUI-Italic, Segoe UI" font-style="italic">tions</tspan></text>
+				</svg>
+			</div>
+			
+		</div>
+	</body>
+</html>
+
+{% else %}
+	<div class=redirect style="width: 360px; height: 0px; margin: 0 auto;">
+		<center><div style="color: #254F6E";>
+			<h1 style="font-family: Segoe UI; font-weight: bold;">AKSES DITOLAK</h1>
+			<p style="font-family: Segoe UI;">Anda harus login untuk mengakses laman ini</p>
+			<p style="font-family: Segoe UI;">Anda akan dialihkan ke laman login dalam 5 detik, bila tidak
+			<a href="{% url 'login' %}" style="font-family: Segoe UI;">Klik Disini!</a>
+		</div></center>
+		<meta http-equiv="Refresh" content="5; url={% url 'login' %}">
+	</div>
+{% endif %}
+{% endblock %}
