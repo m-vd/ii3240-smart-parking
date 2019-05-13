@@ -360,10 +360,6 @@ def updateBookingAPI(request, *args, **kwargs):
         return HttpResponseForbidden("ERR: You are not allowed to access this endpoint.")
 
 
-CRON_CLASSES = [
-    "my_app.cron.MyCronJob",
-]
-
 #Yang perlu dikerjain
 #1. Location tuh perlu ada koordinat gitu biar bisa dikasih navigasi
 #4. Generate Laporan
