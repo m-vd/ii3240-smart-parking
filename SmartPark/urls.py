@@ -56,8 +56,4 @@ urlpatterns = [
     path('accident', AccidentView.as_view()), 
     path('userfe/', include('userfe.urls')),
     path('accounts/', include('django.contrib.auth.urls')),
-    path('', TemplateView.as_view(template_name='index.html'), name='home'),
-
-    
-
 ]
