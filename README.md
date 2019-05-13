@@ -1,6 +1,7 @@
 # Smart Parking Services
 
-"Smart Parking Services" is a system of services intented to realize smart campus concept, especially in parking management. The services is made by several IST students from ITB as a project for one of their courses: II-3240: Information Systems and Technology Engineering. 
+"Smart Parking Services" is a system of services intented to realize smart campus concept, especially in parking management. The services is made by several IST students from ITB as a project for one of their courses: II3240: Information Systems and Technology Engineering. 
+
 ---
 
 * [Language](#language)
@@ -35,10 +36,6 @@ Ticketing handles both check in and check out requests for the clients.
 * **Method:**
 
   `POST`
-  
-* **Success Response:**
-
-  * **Code:** 200 <br />
 
 * **Sample Call:**
 
@@ -49,15 +46,14 @@ Ticketing handles both check in and check out requests for the clients.
 * **Data Params**
 
   When sending the POST requests to the endpoints, you have to include these parameters:
-  `userID`      
-  `locationID`  (there is no need for this parameter when sending POST to /checkout)
+  * `userID`      
+  * `locationID`  (there is no need for this parameter when sending POST to /checkout)
 
 * **Success Response:**
   
   What should the status code be on success and is there any returned data? This is useful when people need to to know what their callbacks should expect!
 
   * **Code:** 200 <br />
-    **Content:** `{ id : 12 }`
     ```
     { "ticketID": "a0785435-ebee-48a9-ad61-6599f2ff4559", 
       "entryTime": "2019-05-13 17:54:09.888289", 
@@ -71,7 +67,7 @@ Ticketing handles both check in and check out requests for the clients.
 
   * **Code:** 400 BAD REQUEST <br />
     **Content:** `ERR: You have already checked in.`
-    **Code:** 403 FORBIDDEN <br />
+  * **Code:** 403 FORBIDDEN <br />
     **Content:** `ERR: You're not allowed to access this endpoint.`
 
 
