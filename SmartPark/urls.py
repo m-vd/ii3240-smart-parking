@@ -26,8 +26,7 @@ from api.views import CheckInLotAPI
 from api.views import generateReport
 from api.views import AddBookingAPI
 from api.views import updateBookingAPI
-from dboard.views import countTicketSipil
-from dboard.views import countTicketSR
+from dboard.views import countTicket
 from dboard.views import HomeView
 from dboard.views import AccidentView
 from django.contrib.staticfiles.urls import staticfiles_urlpatterns
@@ -48,15 +47,9 @@ urlpatterns = [
     path('generatereport', generateReport),
     path('addBooking', AddBookingAPI),
     path('updateBooking', updateBookingAPI),
-    path('get',countTicketSipil),
-    path('get',countTicketSR),
+    path('get', countTicket),
     path('admin/', admin.site.urls),
     path('home', HomeView.as_view()),
     path('accident', AccidentView.as_view()), 
-
-
-    
-
-    
 
 ]
