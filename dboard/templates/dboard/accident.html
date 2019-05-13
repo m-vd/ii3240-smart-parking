@@ -1,0 +1,145 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<title>White Edition</title>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+<link rel="stylesheet" href="static/style.css">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" 
+integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+    <script type="text/javascript">
+      google.charts.load('current', {'packages':['corechart']});
+      google.charts.setOnLoadCallback(drawChart);
+
+      function drawChart() {
+
+        var data = google.visualization.arrayToDataTable([
+          ['Task', 'Hours per Day'],
+          ['Sipil',     580],
+          ['Seni Rupa',      429],
+          ['Saraga',  150],
+          ['Dalam Kampus', 50],
+        ]);
+
+        var options = {
+          title: ''
+        };
+
+        var chart = new google.visualization.PieChart(document.getElementById('piechart'));
+
+        chart.draw(data, options);
+      }
+    </script>
+</head>
+<body>
+<header>
+  <nav class="main-nav">
+    <ul>
+      <li>
+        <ul>
+          <li><a href="http://127.0.0.1:8000/home">Laporan Parkir</a></li>
+          <li><a href="http://127.0.0.1:8000/accident">Laporan Kejadian</a></li>
+          <li><a href="#">Laporan Keuangan</a></li>
+        </ul>
+      </li>
+    </ul>
+  </nav>
+</header>
+
+
+<section id="video" class="home">
+  <h1>SMART PARKIR</h1>
+  <h2>LAPORAN KEJADIAN</h2>
+</section>
+<section id="main-content">
+  <form action="" method="POST" enctype="multipart/form-data">
+	<div class="container">
+		<form>
+			<div class="row">
+				<div class="col-sm-3">
+					<div class="form-group">
+						<label for="country">Tanggal Kejadian</label>
+						<input class="form-control" name="dt" type="date"/>
+					</div>
+				</div>
+				<div class="col-sm-4">
+					<div class="form-group">
+						<label for="state">Lokasi Kejadian</label>
+						<select class="form-control" id="country">
+							<option value="-1">Pilih Lokasi Kejadian</option>
+							<?php
+							foreach($arrCountry as $country){
+								?>
+								<option value="<?php echo $country['id']?>"><?php echo $country['name']?></option>
+								<?php
+							}
+							?>
+						</select>
+					</div>
+				</div>
+				<div class="col-sm-4">
+					<div class="form-group">
+						<label for="city">Jenis Kejadian</label>
+						<select class="form-control" id="city">
+							<option>Pilih Jenis Kejadian</option>
+						</select>
+					</div>
+				</div>
+			</div>
+		</form>
+	</div>
+	<div id="divLoading"></div>
+	
+	<script>
+	$(document).ready(function(){
+		jQuery('#country').change(function(){
+			var id=jQuery(this).val();
+			if(id=='-1'){
+				jQuery('#state').html('<option value="-1">Pilih Kelas</option>');
+			}else{
+				$("#divLoading").addClass('show');
+				jQuery('#state').html('<option value="-1">Pilih Kelas</option>');
+				jQuery('#city').html('<option value="-1">Pilih Mata Pelajaran</option>');
+				jQuery.ajax({
+					type:'post',
+					url:'get_data.php',
+					data:'id='+id+'&type=state',
+					success:function(result){
+						$("#divLoading").removeClass('show');
+						jQuery('#state').append(result);
+					}
+				});
+			}
+		});
+		jQuery('#state').change(function(){
+			var id=jQuery(this).val();
+			if(id=='-1'){
+				jQuery('#city').html('<option value="-1">Pilih Mata Pelajaran</option>');
+			}else{
+				$("#divLoading").addClass('show');
+				jQuery('#city').html('<option value="-1">Pilih Mata Pelajaran</option>');
+				jQuery.ajax({
+					type:'post',
+					url:'get_data.php',
+					data:'id='+id+'&type=city',
+					success:function(result){
+						$("#divLoading").removeClass('show');
+						jQuery('#city').append(result);
+						var resulttab = $('#city option:selected').text();
+					}
+				});
+			}
+		});
+	});
+	</script>
+	<input type="submit" class="btn btn-dark btn-block" name="Search" value="Search" onclick="showTable()" />
+	<br>
+</form>
+</section>
+<br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>	
+</body>
+</html>

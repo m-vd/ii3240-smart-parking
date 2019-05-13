@@ -1,0 +1,79 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+<link rel="stylesheet" href="static/style.css">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" 
+integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>White Edition</title>
+<meta charset="utf-8">
+{% load static %} 
+	<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    <script type="text/javascript">
+      google.charts.load('current', {'packages':['corechart']});
+      google.charts.setOnLoadCallback(drawChart);
+
+      function drawChart() {
+
+        var data = google.visualization.arrayToDataTable([
+          ['Task', 'Hours per Day'],
+          ['Sipil',     {{counter}}],
+          ['Seni Rupa',      {{countTicketSR.counter}}],
+        ]);
+
+        var options = {
+          title: ''
+        };
+
+        var chart = new google.visualization.PieChart(document.getElementById('piechart'));
+
+        chart.draw(data, options);
+      }
+    </script>
+</head>
+<body>
+<header>
+  <nav class="main-nav">
+    <ul>
+      <li>
+        <ul>
+          <li><a href="http://127.0.0.1:8000/home">Laporan Parkir</a></li>
+          <li><a href="http://127.0.0.1:8000/accident">Laporan Kejadian</a></li>
+          <li><a href="#">Laporan Keuangan</a></li>	
+        </ul>
+      </li>
+    </ul>
+  </nav>
+</header>
+
+
+<section id="video" class="home">
+  <h1>SMART PARKIR</h1>
+  <h2>ADMIN PAGE</h2>
+</section>
+<section id="main-content">
+  <div class="text-intro">
+    <h2>LAPORAN PARKIR</h2>
+  </div>
+  <div class="columns features">
+    <div class="one-half first">
+      <div id="piechart" style="width: 600px; height: 400px;"></div>
+    </div>
+    <div class="one-half">
+		<br><br>
+      <h3>Senin, 01 April 2019</h3>
+      <p>Sipil			: {{counter}}</p>
+      <p>Seni Rupa		: 429</p>
+      <p>Saraga			: 150</p>
+      <p>Dalam Kampus	: 50</p>
+      <p style="color:white;">Capicola prosciutto shankle fpancetta filet mignon turducken boudin biltong venison shank.</p>
+      <p><a href="http://127.0.0.1:8000/accident" class="more">Laporan Kejadian</a></p>
+    </div>
+  </div>
+</section>
+</body>
+</html>
