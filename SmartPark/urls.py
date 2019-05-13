@@ -51,14 +51,8 @@ urlpatterns = [
     path('generatereport', generateReport),
     path('addBooking', AddBookingAPI),
     path('updateBooking', updateBookingAPI),
-<<<<<<< HEAD
-    path('get',countTicketSipil),
-    path('get',countTicketSR),
-=======
-    #path('get',countTicketSipil),
-    #path('get',countTicketSR),
-    path('admin/', admin.site.urls),
->>>>>>> ac11a6c309c8d9afbfcc7c0d3ba015591f0838a1
+    # path('get',countTicketSipil),
+    # path('get',countTicketSR),
     path('home', HomeView.as_view()),
     path('accident', AccidentView.as_view()), 
     path('userfe/', include('userfe.urls')),
