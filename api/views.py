@@ -129,9 +129,9 @@ def AskHelpAPI(request, *args, **kwargs):
                 }
                 return HttpResponse(json.dumps(output))
             except:
-                return HttpResponseBadRequest("User not registered")
+                return HttpResponseBadRequest("ERR: You are not registered")
         else:
-            return HttpResponseBadRequest("No questions asked")
+            return HttpResponseBadRequest("ERR: You did not ask any questions")
     else:
         return HttpResponseForbidden()
 
@@ -210,7 +210,7 @@ def UpdateDisaster(request, *args, **kwargs):
         status = request.POST.get('status')
         description = request.POST.get('description')
         d = Disaster.objects.get(disasterID = disaster_id)
-        
+
         if (d):
             d.status = status
             d.updateTime = datetime.datetime.now()
