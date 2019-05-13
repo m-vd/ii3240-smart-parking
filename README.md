@@ -1,6 +1,6 @@
-#Sample Python Services
+# Smart Parking Services
 
-One paragraph of your services description goes here
+"Smart Parking Services" is a system of services intented to realize smart campus concept, especially in parking management. The services is made by several IST students from ITB as a project for one of their courses: II3240: Information Systems and Technology Engineering. 
 
 ---
 
@@ -17,39 +17,123 @@ One paragraph of your services description goes here
 
 ## Language
 
-This services are written in **python**
+This services are written in **python**.
 
 ## List of API Services
 
-### **Testing**
 
----
+### **Ticketing**
 
-This is just an API for testing.
+Ticketing handles both check in and check out requests for the clients.
 
 * **URL**
 
   ```
-  /api
+  /checkin
+  /checkout
   ```
 
 * **Method:**
 
-  `GET`
-  
-* **Success Response:**
-
-  * **Code:** 200 <br />
+  `POST`
 
 * **Sample Call:**
 
   ```
-  curl -i /api
+  curl -i /checkin
+  curl -i /checkout
+  ```
+* **Data Params**
+
+  When sending the POST requests to the endpoints, you have to include these parameters:
+  * `userID`      
+  * `locationID`  (there is no need for this parameter when sending POST to /checkout)
+
+* **Success Response:**
+  
+  What should the status code be on success and is there any returned data? This is useful when people need to to know what their callbacks should expect!
+
+  * **Code:** 200 <br />
+    ```
+    { 
+      "ticketID": "a0785435-ebee-48a9-ad61-6599f2ff4559", 
+      "entryTime": "2019-05-13 17:54:09.888289", 
+      "exitTime": "None" 
+    }
+    ```
+    If successfull, the service will also send an e-mail to the user's registered email notifying them that they are checked in.
+    Exit time will not be empty (None) as the example above for successfull check out response.
+
+* **Error Response:**
+
+  There are 2 error codes, 400 and 403. 400 BAD REQUEST indicates that there is something wrong which mostly is caused by client's input. For example, incomplete parameters or wrong input type. 403 FORBIDDEN is caused by trying to access endpoint that are not available for the user. For example:
+
+  * **Code:** 400 BAD REQUEST <br />
+    **Content:** `ERR: You have already checked in.`
+  * **Code:** 403 FORBIDDEN <br />
+    **Content:** `ERR: You're not allowed to access this endpoint.`
+
+### **Help**
+
+This service is intended as a help center to help users if there's anything that might be confusing for them by simply sending a ticket including their questions. The question will then be answered by officers / admins. 
+
+* **URL**
+
+  ```
+  /askhelp
+  /answerhelp
   ```
 
-* **Notes:**
+* **Method:**
 
-  This is where all uncertainties, commentary, discussion etc. can go. I recommend timestamping and identifying oneself when leaving comments here.
+  `POST`
+
+* **Sample Call:**
+
+  ```
+  curl -i /askhelp
+  curl -i /answerhelp
+  ```
+* **Data Params**
+
+  When sending POST request to `/askhelp` , you have to include these parameters:
+  * `userID`      
+  * `question`
+
+  When sending POST request to `/askhelp` , you have to include these parameters:
+  * `helpID`      
+  * `answer`
+
+* **Success Response:**
+  
+  What should the status code be on success and is there any returned data? This is useful when people need to to know what their callbacks should expect!
+
+  * **Code:** 200 `/askhelp` <br />
+    ```
+    { 
+      "helpID": "0f648e88-cdaf-4c92-ac09-b3471a7f8649", 
+      "userID": "18216001", 
+      "question": "Hi, how are you?"
+    }
+    ```
+
+  * **Code:** 200 `/answerhelp` <br />
+    ```
+    { "helpID": "0f648e88-cdaf-4c92-ac09-b3471a7f8649", 
+      "question": "Hi, how are you?", 
+      "answer": "I'm fine, thanks! How about you?"
+    }
+    ```  
+
+* **Error Response:**
+
+  There are 2 error codes, 400 and 403. 400 BAD REQUEST indicates that there is something wrong which mostly is caused by client's input. For example, incomplete parameters or wrong input type. 403 FORBIDDEN is caused by trying to access endpoint that are not available for the user. For example:
+
+  * **Code:** 400 BAD REQUEST <br />
+    **Content:** `ERR: You are not registered.`
+  * **Code:** 403 FORBIDDEN <br />
+    **Content:** `ERR: You're not allowed to access this endpoint.`
+
 
 ### **Another**
 
@@ -114,7 +198,7 @@ Additional information about your API call. Try to use verbs that match both req
 
 ## Built With
 
-* [nameko](https://www.nameko.io/) - The microservice framework used
+* [django](https://www.djangoproject.com) - The web framework used
 
 ## Authors
 

@@ -2,8 +2,7 @@ from django.conf import settings
 import json, datetime
 from django.core import serializers
 from django.core.mail import send_mail
-from django.http import HttpResponse
-from django.http import HttpResponseForbidden, HttpResponseBadRequest
+from django.http import HttpResponse, HttpResponseForbidden, HttpResponseBadRequest
 from django.shortcuts import render
 
 #Import models
@@ -28,7 +27,7 @@ def CheckInAPI(request, *args, **kwargs):
         user_id = request.POST.get('userID')
         if (User.objects.filter(userID=user_id)):
             if (Ticket.objects.filter(user=user_id, exitTime__isnull=True)):
-                return HttpResponse("You are already in")
+                return HttpResponseBadRequest("ERR: You have already checked in.")
             else: 
                 location_id = request.POST.get('locationID')
                 lot = Lot.objects.get(lotID=location_id)
@@ -51,9 +50,9 @@ def CheckInAPI(request, *args, **kwargs):
                 }
                 return HttpResponse(json.dumps(output))
         else:
-            return HttpResponse("You're not allowed to park here")
+            return HttpResponseBadRequest("ERR: You are not registered.")
     else:
-        return HttpResponseForbidden()
+        return HttpResponseForbidden("ERR: You're not allowed to access this endpoint.")
 
 
 def CheckOutAPI(request, *args, **kwargs):
@@ -81,9 +80,9 @@ def CheckOutAPI(request, *args, **kwargs):
             resp = __Payment(t)
             return resp
         else: 
-            return HttpResponse("You have not checked in yet")
+            return HttpResponseBadRequest("ERR: You are not checked in.")
     else:
-        return HttpResponseForbidden()
+        return HttpResponseForbidden("ERR: You're not allowed to access this endpoint.")
 
 def __Payment(ticket, *args, **kwargs):
     u   = User.objects.get(userID = ticket.user.userID)
@@ -130,9 +129,9 @@ def AskHelpAPI(request, *args, **kwargs):
                 }
                 return HttpResponse(json.dumps(output))
             except:
-                return HttpResponseBadRequest("User not registered")
+                return HttpResponseBadRequest("ERR: You are not registered")
         else:
-            return HttpResponseBadRequest("No questions asked")
+            return HttpResponseBadRequest("ERR: You did not ask any questions")
     else:
         return HttpResponseForbidden()
 
@@ -155,11 +154,11 @@ def AnswerHelpAPI(request, *args, **kwargs):
                 }
                 return HttpResponse(json.dumps(output))
             except: 
-                return HttpResponseBadRequest("Help ID not valid")
+                return HttpResponseBadRequest("ERR: No such help entry.")
         else:
-            return HttpResponseBadRequest("No answer is given")
+            return HttpResponseBadRequest("ERR: No answer is given.")
     else:
-        return HttpResponse("Hello")
+        return HttpResponse()
 
 def CheckInLotAPI(request, *args, **kwargs):
     #API to add or remove capacity per Lot.
@@ -172,7 +171,7 @@ def CheckInLotAPI(request, *args, **kwargs):
             lot_obj.save()
             return HttpResponse(str(lot_obj.lotName)+" capacity -1 to "+str(lot_obj.capacity))
         else:
-            return HttpResponseBadRequest()
+            return HttpResponseBadRequest("ERR: No locationID is sent.")
 
     else:
         return HttpResponseForbidden()
@@ -222,7 +221,7 @@ def AddDisaster(request, *args, **kwargs):
         }
         return HttpResponse(json.dumps(output))
     else:
-        return HttpResponse("Hello")
+        return HttpResponseForbidden("ERR: You are not allowed to access this endpoint.")
 
 def UpdateDisaster(request, *args, **kwargs):
     if (request.method == 'POST'):
@@ -230,6 +229,7 @@ def UpdateDisaster(request, *args, **kwargs):
         status = request.POST.get('status')
         description = request.POST.get('description')
         d = Disaster.objects.get(disasterID = disaster_id)
+
         if (d):
             d.status = status
             d.updateTime = datetime.datetime.now()
@@ -243,9 +243,9 @@ def UpdateDisaster(request, *args, **kwargs):
             }
             return HttpResponse(json.dumps(output))
         else: 
-            return HttpResponse("Disaster ID not valid")
+            return HttpResponseBadRequest("ERR: No disaster found.")
     else:
-        return HttpResponse("Hello")
+        return HttpResponseForbidden("ERR: You are not allowed to access this endpoint.")
 
 def getCapacity(request, *args, **kwargs):
     #required parameters : locationID
@@ -259,9 +259,9 @@ def getCapacity(request, *args, **kwargs):
             }
             return HttpResponse(json.dumps(output))
         else: 
-            return HttpResponse("Lot Name not valid")
+            return HttpResponseBadRequest("ERR: No location found.")
     else:
-        return HttpResponse("Hello")
+        return HttpResponseForbidden("ERR: You are not allowed to access this endpoint.")
             
 #blm jadi nih wkwk
 def generateReport(request, *args, **kwargs):
@@ -270,32 +270,34 @@ def generateReport(request, *args, **kwargs):
     
         start_date   = request.GET.get('startdate')
         end_date     = request.GET.get('enddate')
+
         if (start_date): 
             startdate   = datetime.datetime.strptime(start_date, '%Y-%m-%d')
         else:
-            startdate = None
+            startdate   = None
+
         if (end_date):
             enddate     = datetime.datetime.strptime(end_date, '%Y-%m-%d')
         else:
-            enddate = None
+            enddate     = None
         
         if (category=="payment"): 
             print(startdate, enddate)
             obj = Payment.objects.filter(paymentTime__range=(startdate, enddate))
         elif (category=="parking"):
-            u = User.objects.get(userID = request.GET.get('userID')) 
-            l = Lot.objects.get(lotID = request.GET.get('lotID'))
+            u   = User.objects.get(userID = request.GET.get('userID')) 
+            l   = Lot.objects.get(lotID = request.GET.get('lotID'))
             obj = Ticket.objects.filter(entryTime__range=(startdate, enddate), location=l, user=u)
         else: 
-            return HttpResponse("Category is not valid")
+            return HttpResponseBadRequest("ERR: Invalid category")
 
         if (obj):
             obj_json = serializers.serialize('json', obj)
             return HttpResponse(obj_json, content_type='application/json')
         else: 
-            return HttpResponse("Date Name not valid")
+            return HttpResponseBadRequest("ERR: Invalid date.")
     else:
-        return HttpResponse("GET Request Only")
+        return HttpResponseForbidden("ERR: You are not allowed to access this endpoint.")
 
 def AddBookingAPI(request, *args, **kwargs):
     #API to check in to park
@@ -303,11 +305,13 @@ def AddBookingAPI(request, *args, **kwargs):
     if (request.method == 'POST'):
         user_id = request.POST.get('userID')
         u = User.objects.get(userID=user_id)
+
         if (User.objects.filter(userID=user_id) and not Booking.objects.filter(user=u, status = "Reserved")):
             location_id = request.POST.get('locationID')
             lot = Lot.objects.get(lotID=location_id)
             time = request.POST.get('bookingTime')
             bookingPrice = 5000
+
             if (u.userBalance >= bookingPrice) and (lot.capacity>0):
                 b = Booking(user = (User.objects.get(userID = user_id)), location = lot, bookingTime= time, status="Reserved")
                 if (lot.lotID == "Motor_Sipil" or lot.lotID == "Motor_SR" or lot.lotID == "Mobil_SR"):
@@ -329,13 +333,14 @@ def AddBookingAPI(request, *args, **kwargs):
                     'bookingTime' : str(b.bookingTime),
                     'location' : str(b.location.lotName),
                 }
+
                 return HttpResponse(json.dumps(output))
             else:
-                return HttpResponse("Booking failed")
+                return HttpResponseBadRequest("ERR: Booking failed")
         else:
-            return HttpResponse("You're not allowed to make booking")
+            return HttpResponseBadRequest("ERR: You are not allowed to book")
     else:
-        return HttpResponseForbidden()
+        return HttpResponseForbidden("ERR: You are not allowed to access this endpoint.")
 
 def updateBookingAPI(request, *args, **kwargs):
     #API to checkout
@@ -350,9 +355,9 @@ def updateBookingAPI(request, *args, **kwargs):
             b.save()
             return HttpResponse("Booking status updated!") 
         else: 
-            return HttpResponse("You have not booked yet")
+            return HttpResponseBadRequest("ERR: You have not booked yet.")
     else:
-        return HttpResponseForbidden()
+        return HttpResponseForbidden("ERR: You are not allowed to access this endpoint.")
 
 
 CRON_CLASSES = [

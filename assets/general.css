@@ -1,0 +1,36 @@
+body {
+	
+}
+
+.container {
+	width: 360px;
+	height: 640px;
+	margin: 0 auto;
+}
+
+.header {
+	width: 360px;
+	margin: 0 auto;
+}
+
+input[type=text] {
+	font-family: Open Sans;
+	margin: 0px 0px 0px 0px;
+	width: 220px;
+	height: 40px;
+	padding-left: 20px;
+	color: #2E2E2E;
+	background-color: #B7B7B7;
+	border: 2px solid white;
+	border-radius: 12px;
+}
+
+input[type=submit] {
+	margin: 0px 0px 0px 0px;
+	width: 100px;
+	height: 40px;
+	color: #254F6E;
+	background-color: white;
+	border: 2px solid #254F6E;
+	border-radius: 12px;
+}

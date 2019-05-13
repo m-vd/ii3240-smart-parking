@@ -33,7 +33,9 @@ SECRET_KEY = 'sifopo4_6+ule#hz^@9v$-+r3ugkiw35moxvm6jyu0&7p06^1v'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = [
+    #'192.168.1.27'
+]
 
 
 # Application definition
@@ -46,6 +48,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django.contrib.humanize',
+    'userfe.apps.UserfeConfig',
 
 
     #own
@@ -56,7 +59,7 @@ INSTALLED_APPS = [
     'parkingLot',
     'booking',
     'disaster',
-    'help'
+    'help',
 ]
 
 MIDDLEWARE = [
@@ -143,3 +146,6 @@ STATIC_URL = '/static/'
 STATICFILES_DIRS = (
 	os.path.join(BASE_DIR, 'assets'),
 )
+
+LOGIN_REDIRECT_URL = '/'
+LOGOUT_REDIRECT_URL = '/'
