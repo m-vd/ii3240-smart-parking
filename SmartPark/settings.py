@@ -88,9 +88,7 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'SmartPark.wsgi.application'
-CRON_CLASSES = [
-    "SmartPark.cron.MyCronJob",
-]
+
 
 
 # Database
