@@ -32,7 +32,7 @@
 			
 			<div class=question style="width: 360px;">
 			<center>
-				<form action="/askhelp" method="post">
+				<form action="/ask-help" method="post">
 					{% csrf_token %}
 					<input type="text" id="question" name="question" placeholder="Tanyakan sesuatu">
 					<input type="hidden" id="userID" name="userID" value={{uname}}>

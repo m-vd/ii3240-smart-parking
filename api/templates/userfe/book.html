@@ -33,7 +33,7 @@
 
 			<div class=content>
 				<center>
-				<form action="/addBooking" method="post">
+				<form action="/add-booking" method="post">
 					{% csrf_token %}
 					<select class=locID id="locationID" name="locationID" placeholder="SIlahkan pilih lokasi">
 						<option value="Motor_Sipil">Sipil</option>
@@ -41,7 +41,7 @@
 						<option value="Mobil_SR">SR (Mobil)</option>
 					</select>
 					<input type="hidden" id="userID" name="userID" value={{uname}}>
-					<input type="submit" value="SR (Motor)">
+					<input type="submit" value="Book!">
 				</form>
 
 				<teks>
