@@ -35,10 +35,14 @@
 				<center>
 				<form action="/add-booking" method="post">
 					{% csrf_token %}
-					<select class=locID id="locationID" name="locationID" placeholder="SIlahkan pilih lokasi">
+					<select class=locID id="locationID" name="locationID" placeholder="Silahkan pilih lokasi">
 						<option value="Motor_Sipil">Sipil</option>
 						<option value="Motor_SR">SR (Motor)</option>
 						<option value="Mobil_SR">SR (Mobil)</option>
+						<option value="Dalam_Motor_LabtekV">Labtek V (Motor)</option>
+						<option value="Dalam_Mobil_LabtekV">Labtek V (Mobil)</option>
+						<option value="Dalam_Motor_LabtekVIII">Labtek VIII (Motor)</option>
+						<option value="Dalam_Mobil_LabtekVIII">Labtek VIII (Mobil)</option>
 					</select>
 					<input type="hidden" id="userID" name="userID" value={{uname}}>
 					<input type="submit" value="Book!">
