@@ -2,6 +2,7 @@ from django.shortcuts import render
 from django.template import loader
 from django.http import HttpResponse
 from ticketing.models import Ticket
+from parkingLot.models import Lot
 
 def index(request):
 #	return HttpResponse("Hello")
@@ -32,7 +33,20 @@ def countSlot(request, *args, **kwargs):
 	counter_sipil = 0
 	counter_sr_mobil = 0
 	counter_sr_motor = 0
+	capacity_sipil = 0
+	capacity_sr_motor = 0
+	capacity_sr_mobil = 0
 	tickets = Ticket.objects.all()
+	location = Lot.objects.all()
+
+	for l in location:
+		if (l.lotID == 'Motor_Sipil'):
+			capacity_sipil = l.capacity
+		elif (l.lotID == 'Motor_SR'):
+			capacity_sr_motor = l.capacity
+		elif (l.lotID == 'Mobil_SR'):
+			capacity_sr_mobil = l.capacity
+
 	for t in tickets:
 		if (t.exitTime == None):
 			if (t.location.lotID == 'Motor_Sipil'):
@@ -41,9 +55,9 @@ def countSlot(request, *args, **kwargs):
 				counter_sr_motor += 1
 			elif (t.location.lotID == 'Mobil_SR'):
 				counter_sr_mobil += 1
-	slot_sipil = 300 - counter_sipil
-	slot_sr_motor = 200 - counter_sr_motor
-	slot_sr_mobil = 14 - counter_sr_mobil
+	slot_sipil = capacity_sipil - counter_sipil
+	slot_sr_motor = capacity_sr_motor - counter_sr_motor
+	slot_sr_mobil = capacity_sr_mobil - counter_sr_mobil
 
 	slot = {
 		'sipil' : slot_sipil,
@@ -52,3 +66,10 @@ def countSlot(request, *args, **kwargs):
 	}
 	return render(request, 'userfe/index.html', {'slot': slot})
 
+def inputHelp(request, *args, **kwargs):
+	uname = request.user.username
+	return render(request, 'userfe/help.html', {'uname': uname})
+
+def inputBook(request, *args, **kwargs):
+	uname = request.user.username
+	return render(request, 'userfe/book.html', {'uname': uname})

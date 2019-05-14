@@ -5,9 +5,9 @@ from userfe import views
 
 urlpatterns = [
 	path('faq/', views.faq, name='faq'),
-	path('book/', views.book, name='book'),
+	path('book/', views.inputBook),
 	path('login/', views.login, name='login'),
-	path('help/', views.help),
+	path('help/', views.inputHelp),
 	path('navigate/', views.navigate, name='navigate'),
 	path('', views.countSlot),
 ]

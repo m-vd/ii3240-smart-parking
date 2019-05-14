@@ -36,7 +36,7 @@ def Book(request, *args, **kwargs):
 
                 #Send Check In Notification
                 subject = 'Your booking are reserved!'
-                message = 'Congratulations! \nYour booking at ' + str(b.location.lotName) + ' is reserved from ' + b.bookingTime + ' until 1 hour after that. \nThe booking will cost you IDR 5,000 exclude parking fees.'        
+                message = 'Congratulations! \nYour booking at ' + str(b.location.lotName) + ' is reserved from ' + str(b.bookingTime) + ' until 1 hour after that. \nThe booking will cost you IDR 5,000 exclude parking fees.'        
                 to_list = [b.user.userEmail]
                 send_mail(subject,message,settings.EMAIL_HOST_USER,to_list,fail_silently=True)
 
