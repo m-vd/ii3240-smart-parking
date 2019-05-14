@@ -1,7 +1,7 @@
 from django.conf import settings
 import json, datetime
 from django.core.mail import send_mail
-from django.http import HttpResponse, HttpResponseForbidden, HttpResponseBadRequest
+from django.http import HttpResponse, HttpResponseForbidden, HttpResponseBadRequest, JsonResponse
 from django.shortcuts import render
 
 #Import models
@@ -35,11 +35,12 @@ def AddDisaster(request, *args, **kwargs):
             'location' : str(d.location),
             'description' : str(d.description),
         }
-        return HttpResponse(json.dumps(output))
+        return JsonResponse(output)
     else:
         return HttpResponseForbidden("ERR: You are not allowed to access this endpoint.")
 
 def UpdateDisaster(request, *args, **kwargs):
+    #required parameter: disasterID, 
     if (request.method == 'POST'):
         disaster_id = request.POST.get('disasterID')
         status = request.POST.get('status')
@@ -53,11 +54,11 @@ def UpdateDisaster(request, *args, **kwargs):
             d.save()
             output = {
                 'disasterID' : str(d.disasterID),
-                'status' : str(d.user.userID),
+                'status' : str(d.status),
                 'location' : str(d.location),
                 'description' : str(d.description),
             }
-            return HttpResponse(json.dumps(output))
+            return JsonResponse(output)
         else: 
             return HttpResponseBadRequest("ERR: No disaster found.")
     else:

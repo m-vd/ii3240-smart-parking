@@ -12,3 +12,4 @@ class Booking(models.Model):
     bookingTime = models.DateTimeField(null=True)
     location    = models.ForeignKey(Lot, on_delete=models.CASCADE)
     status      = models.CharField(max_length=30)
+    checkInTime = models.DateTimeField(null=True)

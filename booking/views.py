@@ -1,17 +1,18 @@
 from django.conf import settings
 import json, datetime
 from django.core.mail import send_mail
-from django.http import HttpResponse, HttpResponseForbidden, HttpResponseBadRequest
+from django.http import HttpResponse, HttpResponseForbidden, HttpResponseBadRequest, JsonResponse
 from django.shortcuts import render
+import requests
 
 #Import models
 from ticketing.models import Ticket 
 from parkingLot.models import Lot
 from user.models import User
-from payment.models import Payment
 from booking.models import Booking
+from payment.models import Payment
 
-def AddBookingAPI(request, *args, **kwargs):
+def Book(request, *args, **kwargs):
     #API to check in to park
     #Needed parameters: userID and locationID
     if (request.method == 'POST'):
@@ -41,12 +42,12 @@ def AddBookingAPI(request, *args, **kwargs):
 
                 #Generate output               
                 output = {
-                    'ticketID' : str(b.bookingID),
+                    'bookingID' : str(b.bookingID),
                     'bookingTime' : str(b.bookingTime),
                     'location' : str(b.location.lotName),
                 }
 
-                return HttpResponse(json.dumps(output))
+                return JsonResponse(output)
             else:
                 return HttpResponseBadRequest("ERR: Booking failed")
         else:
@@ -54,7 +55,7 @@ def AddBookingAPI(request, *args, **kwargs):
     else:
         return HttpResponseForbidden("ERR: You are not allowed to access this endpoint.")
 
-def UpdateBookingAPI(request, *args, **kwargs):
+def CheckInBooking(request, *args, **kwargs):
     #API to checkout
     #Needed parameters: userID
     if (request.method == 'POST'):
@@ -63,9 +64,38 @@ def UpdateBookingAPI(request, *args, **kwargs):
         #Find booking and set status
         if (Booking.objects.filter(user=user_id, status="Reserved")):
             b = Booking.objects.get(user=user_id, status="Reserved")
-            b.status = "Check In"
+            b.status = "Checked In"
+            b.checkInTime = datetime.datetime.now()
             b.save()
-            return HttpResponse("Booking status updated!") 
+
+            #Create ticket by calling CheckInAPI from Ticketing.
+            #But first add back the location capacity so it won't be reduced twice since CheckInAPI also decreases it.
+            lot = b.location
+            if (lot.lotID == "Motor_Sipil" or lot.lotID == "Motor_SR" or lot.lotID == "Mobil_SR"):
+                lot.capacity += 1
+                lot.save()
+
+            #Send a request to CheckInAPI
+            url = "http://0.0.0.0:8000/check-in"
+            userID = b.user.userID
+            lotID = b.location.lotID
+            payload = "userID="+str(userID)+"&locationID="+str(lotID)
+            headers = {
+                'Content-Type': "application/x-www-form-urlencoded",
+            }
+
+            requests.request("POST", url, data=payload, headers=headers)
+
+            #Generate Output
+            output = {
+                'bookingID'     : str(b.bookingID),
+                'bookingTime'   : str(b.bookingTime),
+                'location'      : str(b.location.lotName),
+                'status'        : str(b.status),
+                'checkInTime'   : str(b.checkInTime),
+            }
+
+            return JsonResponse(output)
         else: 
             return HttpResponseBadRequest("ERR: You have not booked yet.")
     else:

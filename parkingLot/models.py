@@ -13,6 +13,6 @@ class Lot(models.Model):
     updateTime  = models.DateTimeField(null = True)
     capacity    = models.IntegerField()
     status      = models.CharField(max_length=30)
-    lat = models.DecimalField(max_digits=22, decimal_places=16, blank=True, null=True)
-    long = models.DecimalField(max_digits=22, decimal_places=16, blank=True, null=True)
+    lat         = models.DecimalField(max_digits=22, decimal_places=16, blank=True, null=True)
+    long        = models.DecimalField(max_digits=22, decimal_places=16, blank=True, null=True)
 

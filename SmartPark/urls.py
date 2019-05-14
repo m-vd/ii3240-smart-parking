@@ -35,25 +35,25 @@ from disaster.views import UpdateDisaster
 from api.views import getCapacity
 from api.views import generateReport
 #Booking
-from booking.views import AddBookingAPI
-from booking.views import UpdateBookingAPI
+from booking.views import Book
+from booking.views import CheckInBooking
 #Website
 from dboard.views import HomeView
 from dboard.views import AccidentView
 
 urlpatterns = [
-    path('checkin', CheckInAPI),
-    path('checkout', CheckOutAPI),
+    path('check-in', CheckInAPI),
+    path('check-out', CheckOutAPI),
     path('admin/', admin.site.urls),
-    path('askhelp', AskHelpAPI),
-    path('answerhelp', AnswerHelpAPI),
-    path('lot/checkin', CheckInLotAPI),
-    path('adddisaster', AddDisaster),
-    path('updatedisaster', UpdateDisaster),
+    path('ask-help', AskHelpAPI),
+    path('answer-help', AnswerHelpAPI),
+    path('lot/check-in', CheckInLotAPI),
+    path('add-disaster', AddDisaster),
+    path('update-disaster', UpdateDisaster),
     path('capacity', getCapacity),
-    path('generatereport', generateReport),
-    path('addBooking', AddBookingAPI),
-    path('updateBooking', UpdateBookingAPI),
+    path('generate-report', generateReport),
+    path('add-booking', Book),
+    path('check-in-booking', CheckInBooking),
     path('home', HomeView.as_view()),
     path('accident', AccidentView.as_view()), 
     path('userfe/', include('userfe.urls')),

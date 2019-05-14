@@ -1,7 +1,7 @@
 from django.conf import settings
 import json, datetime
 from django.core.mail import send_mail
-from django.http import HttpResponse, HttpResponseForbidden, HttpResponseBadRequest
+from django.http import HttpResponse, HttpResponseForbidden, HttpResponseBadRequest, JsonResponse
 from django.shortcuts import render
 
 #Import models
@@ -46,7 +46,7 @@ def CheckInAPI(request, *args, **kwargs):
                     'entryTime' : str(t.entryTime),
                     'exitTime' : str(t.exitTime),
                 }
-                return HttpResponse(json.dumps(output))
+                JsonResponse(output)
         else:
             return HttpResponseBadRequest("ERR: You are not registered.")
     else:
@@ -69,11 +69,11 @@ def CheckOutAPI(request, *args, **kwargs):
             loc_obj = t.location
             CheckLot(loc_obj)
 
-            #Change booking status if the lot was booked
-            if (Booking.objects.filter(user=user_id, status="Check In")):
-                b = Booking.objects.get(user=user_id, status="Check In")
-                b.status = "Checked Out"
-                b.save()
+            # #Change booking status if the lot was booked
+            # if (Booking.objects.filter(user=user_id, status="Check In")):
+            #     b = Booking.objects.get(user=user_id, status="Check In")
+            #     b.status = "Checked Out"
+            #     b.save()
             
             resp = __Payment(t)
             return resp
