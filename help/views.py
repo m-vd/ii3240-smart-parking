@@ -46,6 +46,10 @@ def AnswerHelpAPI(request, *args, **kwargs):
                 h.answer = answer
                 h.answerTime = datetime.datetime.now()
                 h.save()
+                subject = 'Answer to your question'
+                message = 'Regarding your question: '+str(h.question)+' \nResponse: '+str(h.answer)
+                to_list=[h.user.userEmail]
+                send_mail(subject,message,settings.EMAIL_HOST_USER,to_list,fail_silently=True)
                 output = {
                     'helpID' : str(h.helpID),
                     'question' : str(h.question),
