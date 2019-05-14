@@ -17,10 +17,11 @@ def Book(request, *args, **kwargs):
     if (request.method == 'POST'):
         user_id = request.POST.get('userID')
         u = User.objects.get(userID=user_id)
+        location_id = request.POST.get('locationID')
+        lot = Lot.objects.get(lotID=location_id)
 
-        if (User.objects.filter(userID=user_id) and not Booking.objects.filter(user=u, status = "Reserved")):
-            location_id = request.POST.get('locationID')
-            lot = Lot.objects.get(lotID=location_id)
+        if (User.objects.filter(userID=user_id) and (u.userType>=lot.auth) and not Booking.objects.filter(user=u, status = "Reserved")):
+
             time = request.POST.get('bookingTime')
             bookingPrice = 5000
 
