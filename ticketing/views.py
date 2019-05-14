@@ -12,6 +12,7 @@ from payment.models import Payment
 from booking.models import Booking
 from help.models import Help
 from disaster.models import Disaster
+from booking.views import CheckInBooking
 
 def CheckLot(lot):
     if (lot.lotID == "Motor_Sipil" or lot.lotID == "Motor_SR" or lot.lotID == "Mobil_SR"):
@@ -31,7 +32,8 @@ def CheckInAPI(request, *args, **kwargs):
                 lot = Lot.objects.get(lotID=location_id)
                 t = Ticket(user = (User.objects.get(userID = user_id)), location = lot)
                 
-                CheckLot(lot)
+                if (not CheckInBooking(user_id)):
+                    CheckLot(lot)
                 t.save()
 
                 #Send Check In Notification
@@ -46,7 +48,7 @@ def CheckInAPI(request, *args, **kwargs):
                     'entryTime' : str(t.entryTime),
                     'exitTime' : str(t.exitTime),
                 }
-                JsonResponse(output)
+                return JsonResponse(output)
         else:
             return HttpResponseBadRequest("ERR: You are not registered.")
     else:
@@ -69,11 +71,11 @@ def CheckOutAPI(request, *args, **kwargs):
             loc_obj = t.location
             CheckLot(loc_obj)
 
-            # #Change booking status if the lot was booked
-            # if (Booking.objects.filter(user=user_id, status="Check In")):
-            #     b = Booking.objects.get(user=user_id, status="Check In")
-            #     b.status = "Checked Out"
-            #     b.save()
+            #Change booking status if the lot was booked
+            if (Booking.objects.filter(user=user_id, status="Checked In")):
+                b = Booking.objects.get(user=user_id, status="Checked In")
+                b.status = "Checked Out"
+                b.save()
             
             resp = __Payment(t)
             return resp

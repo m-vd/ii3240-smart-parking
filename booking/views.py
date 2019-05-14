@@ -3,7 +3,6 @@ import json, datetime
 from django.core.mail import send_mail
 from django.http import HttpResponse, HttpResponseForbidden, HttpResponseBadRequest, JsonResponse
 from django.shortcuts import render
-import requests
 
 #Import models
 from ticketing.models import Ticket 
@@ -55,49 +54,17 @@ def Book(request, *args, **kwargs):
     else:
         return HttpResponseForbidden("ERR: You are not allowed to access this endpoint.")
 
-def CheckInBooking(request, *args, **kwargs):
-    #API to checkout
+def CheckInBooking(user_id):
+    #method to checkout
     #Needed parameters: userID
-    if (request.method == 'POST'):
-        user_id = request.POST.get('userID')
         
-        #Find booking and set status
-        if (Booking.objects.filter(user=user_id, status="Reserved")):
-            b = Booking.objects.get(user=user_id, status="Reserved")
-            b.status = "Checked In"
-            b.checkInTime = datetime.datetime.now()
-            b.save()
+    if (Booking.objects.filter(user=user_id, status="Reserved")):
+        b = Booking.objects.get(user=user_id, status="Reserved")
+        b.status = "Checked In"
+        b.checkInTime = datetime.datetime.now()
+        b.save()
 
-            #Create ticket by calling CheckInAPI from Ticketing.
-            #But first add back the location capacity so it won't be reduced twice since CheckInAPI also decreases it.
-            lot = b.location
-            if (lot.lotID == "Motor_Sipil" or lot.lotID == "Motor_SR" or lot.lotID == "Mobil_SR"):
-                lot.capacity += 1
-                lot.save()
-
-            #Send a request to CheckInAPI
-            url = "http://0.0.0.0:8000/check-in"
-            userID = b.user.userID
-            lotID = b.location.lotID
-            payload = "userID="+str(userID)+"&locationID="+str(lotID)
-            headers = {
-                'Content-Type': "application/x-www-form-urlencoded",
-            }
-
-            requests.request("POST", url, data=payload, headers=headers)
-
-            #Generate Output
-            output = {
-                'bookingID'     : str(b.bookingID),
-                'bookingTime'   : str(b.bookingTime),
-                'location'      : str(b.location.lotName),
-                'status'        : str(b.status),
-                'checkInTime'   : str(b.checkInTime),
-            }
-
-            return JsonResponse(output)
-        else: 
-            return HttpResponseBadRequest("ERR: You have not booked yet.")
-    else:
-        return HttpResponseForbidden("ERR: You are not allowed to access this endpoint.")
+        return True
+    else: 
+        return False
 
