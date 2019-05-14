@@ -207,3 +207,4 @@ dockersetting.sh
 .vscode
 db.sqlite3
 __pycache__
+.vs
