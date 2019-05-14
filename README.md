@@ -30,8 +30,8 @@ Ticketing handles both check in and check out requests for the clients.
 * **URL**
 
   ```path
-  /checkin
-  /checkout
+  /check-in
+  /check-out
   ```
 
 * **Method:**
