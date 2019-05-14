@@ -122,7 +122,13 @@ def countPayment(request, *args, **kwargs):
         return render(request, 'api/payment.html', {'counter': counter })
     else:   
 	#default menampilkan pemasukan hari ini saat ini
-        today = datetime.today()
+        #today = datetime.now()
+        #print(today)
+        #tomorow = today + timedelta(days=1)
+        #print(tomorow)
+        now = datetime.now()
+        today_str = now.strftime("%Y-%m-%d") + " 00:00:00.01"
+        today = datetime.strptime(today_str, '%Y-%m-%d %H:%M:%S.%f')
         tomorow = today + timedelta(days=1)
         for p in payment:
             if(today < p.paymentTime and p.paymentTime < tomorow):
