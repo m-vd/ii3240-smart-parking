@@ -208,3 +208,4 @@ dockersetting.sh
 db.sqlite3
 __pycache__
 .vs
+/__pycache__/

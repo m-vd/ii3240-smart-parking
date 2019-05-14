@@ -54,7 +54,6 @@ urlpatterns = [
     path('generatereport', generateReport),
     path('addBooking', AddBookingAPI),
     path('updateBooking', UpdateBookingAPI),
-    path('admin/', admin.site.urls),
     path('home', HomeView.as_view()),
     path('accident', AccidentView.as_view()), 
     path('userfe/', include('userfe.urls')),
