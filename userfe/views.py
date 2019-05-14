@@ -52,3 +52,10 @@ def countSlot(request, *args, **kwargs):
 	}
 	return render(request, 'userfe/index.html', {'slot': slot})
 
+def inputHelp(request, *args, **kwargs):
+	uname = request.user.username
+	return render(request, 'userfe/help.html', {'uname': uname})
+
+def inputBook(request, *args, **kwargs):
+	uname = request.user.username
+	return render(request, 'userfe/book.html', {'uname': uname})

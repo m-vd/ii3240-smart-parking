@@ -97,7 +97,7 @@ def generateReport(request, *args, **kwargs):
     else:
         return HttpResponseForbidden("ERR: You are not allowed to access this endpoint.")
 
-<<<<<<< HEAD
+#<<<<<<< HEAD
 def AddBookingAPI(request, *args, **kwargs):
     #API to check in to park
     #Needed parameters: userID and locationID
@@ -158,8 +158,8 @@ def updateBookingAPI(request, *args, **kwargs):
     else:
         return HttpResponseForbidden("ERR: You are not allowed to access this endpoint.")
 
-=======
->>>>>>> b97a4c4d3628ee04e8416f13a8f4560fba2d129d
+#=======
+#>>>>>>> b97a4c4d3628ee04e8416f13a8f4560fba2d129d
 
 #Yang perlu dikerjain
 #1. Location tuh perlu ada koordinat gitu biar bisa dikasih navigasi

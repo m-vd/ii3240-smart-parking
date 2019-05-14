@@ -35,7 +35,7 @@
 				<form action="/askhelp" method="post">
 					{% csrf_token %}
 					<input type="text" id="question" name="question" placeholder="Tanyakan sesuatu">
-					<input type="text" id="userID" name="userID" placeholder="Masukkan userID"><br><br>
+					<input type="hidden" id="userID" name="userID" value={{uname}}>
 					<input type="submit" value="Submit">
 				</form>
 			</center>
