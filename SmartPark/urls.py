@@ -38,8 +38,8 @@ from api.views import generateReport
 from booking.views import Book
 from booking.views import CheckInBooking
 #Website
-from dboard.views import HomeView
-from dboard.views import AccidentView
+from dboard.views import countTicket
+from dboard.views import countPayment
 
 urlpatterns = [
     path('check-in', CheckInAPI),
@@ -54,8 +54,8 @@ urlpatterns = [
     path('generate-report', generateReport),
     path('add-booking', Book),
     path('check-in-booking', CheckInBooking),
-    path('home', HomeView.as_view()),
-    path('accident', AccidentView.as_view()), 
     path('userfe/', include('userfe.urls')),
     path('accounts/', include('django.contrib.auth.urls')),
+    path('getCountTicket',countTicket),
+    path('getCountPayment',countPayment),
 ]

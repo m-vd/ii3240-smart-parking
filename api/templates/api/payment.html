@@ -47,7 +47,7 @@
             <ul>
               <li><a href="/getCountTicket">Laporan TIKET</a></li>
               <li><a href="/accident">Laporan Kejadian</a></li>
-              <li><a href="/getCountPayment">Laporan Keuangan</a></li>
+              <li><a href="getCountPayment">Laporan Keuangan</a></li>
             </ul>
           </li>
         </ul>
@@ -57,10 +57,10 @@
 
     <section id="video" class="home">
       <h1>SMART PARKIR</h1>
-      <h2>LAPORAN TIKET</h2>
+      <h2>LAPORAN PENDAPATAN</h2>
     </section>
     <section id="main-content">
-		<form action="/getCountTicket" method="post">
+		<form action="/getCountPayment" method="post">
 			{% csrf_token %}
             <label>Dari</label>
 			<input type="date" id="dt" name="dt" class="form-control"  /><br />
