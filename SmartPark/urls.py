@@ -40,6 +40,8 @@ from booking.views import CheckInBooking
 #Website
 from dboard.views import countTicket
 from dboard.views import countPayment
+from dboard.views import countDisaster
+from dboard.views import ReportView
 
 urlpatterns = [
     path('check-in', CheckInAPI),
@@ -58,4 +60,6 @@ urlpatterns = [
     path('accounts/', include('django.contrib.auth.urls')),
     path('getCountTicket',countTicket),
     path('getCountPayment',countPayment),
+    path('getDisaster',countDisaster),
+    path('report', ReportView.as_view()),
 ]

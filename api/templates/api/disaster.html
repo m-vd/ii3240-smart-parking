@@ -1,0 +1,106 @@
+﻿<!DOCTYPE HTML>
+{% extend 'base.html' % }
+{% load static %}
+
+{% block body %}
+<html>
+<head>
+    <title>White Edition</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <link rel="stylesheet" href="static/style.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css"
+          integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+    <script type="text/javascript">
+        google.charts.load('current', { 'packages': ['corechart'] });
+        google.charts.setOnLoadCallback(drawChart);
+
+        function drawChart() {
+
+            var data = google.visualization.arrayToDataTable([
+                ['Task', 'Hours per Day'],
+                ['Sipil', 580],
+                ['Seni Rupa', 429],
+                ['Saraga', 150],
+                ['Dalam Kampus', 50],
+            ]);
+
+            var options = {
+                title: ''
+            };
+
+            var chart = new google.visualization.PieChart(document.getElementById('piechart'));
+
+            chart.draw(data, options);
+        }
+    </script>
+</head>
+<body>
+    <header>
+        <nav class="main-nav">
+            <ul>
+                <li>
+                    <ul>
+                        <li><a href="/getCountTicket">Laporan Parkir</a></li>
+                        <li><a href="/getAccident">Laporan Kejadian</a></li>
+                        <li><a href="/getCountPayment">Laporan Keuangan</a></li>
+                        <li><a href="/report">Laporan Keuangan</a></li>
+                    </ul>
+                </li>
+            </ul>
+        </nav>
+    </header>
+
+    <section id="video" class="home">
+        <h1>SMART PARKIR</h1>
+        <h2>LAPORAN KEJADIAN</h2>
+    </section>
+    <section id="main-content">
+        <form action="" method="POST" enctype="multipart/form-data">
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label for="dt">Tanggal Kejadian</label>
+                    <input class="form-control" id="dt" name="dt" type="date" />
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label for="loct">Jenis Kejadian</label>
+                    <select class="form-control" id="loct">
+                        <option value="Pohon tumbang">Pohon tumbang</option>
+                        <option value="Kehilangan">Kehilangan</option>
+                        <option value="Lain-lain">Lain-lain</option>
+                    </select>
+                </div>
+            </div>
+            <input type="submit" class="btn btn-dark btn-block" name="Search" value="Search" onclick="showTable()" />
+        </form>
+        <div class="container">
+            {% for d in 'disaster' %}
+            <div class="col-sm-6">
+                <p>{{d.disasterID}}</p>
+            </div>
+            <div class="col-sm-6">
+                <p>{{d.disasterTime}}</p>
+            </div>
+            <div class="col-sm-6">
+                <p>{{d.location.lotID}}</p>
+            </div>
+            <div class="col-sm-6">
+                <p>{{d.status}}</p>
+            </div>
+            <div class="col-sm-6">
+                <p>{{d.description}}</p>
+            </div>
+            {% endfor %}
+        </div>
+    </section>
+
+
+</body>
+</html>
+{% endblock %}
