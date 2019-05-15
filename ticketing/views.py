@@ -24,14 +24,14 @@ def CheckInAPI(request, *args, **kwargs):
     #Needed parameters: userID and locationID
     if (request.method == 'POST'):
         user_id = request.POST.get('userID')
+        location_id = request.POST.get('locationID')
+        lot = Lot.objects.get(lotID=location_id)
         if (User.objects.filter(userID=user_id)):
+            u=User.objects.get(userID = user_id)
             if (Ticket.objects.filter(user=user_id, exitTime__isnull=True)):
                 return HttpResponseBadRequest("ERR: You have already checked in.")
-            else: 
-                location_id = request.POST.get('locationID')
-                lot = Lot.objects.get(lotID=location_id)
-                t = Ticket(user = (User.objects.get(userID = user_id)), location = lot)
-                
+            elif (u.userType>=lot.auth):              
+                t = Ticket(user = u, location = lot)               
                 if (not CheckInBooking(user_id)):
                     CheckLot(lot)
                 t.save()
@@ -49,6 +49,8 @@ def CheckInAPI(request, *args, **kwargs):
                     'exitTime' : str(t.exitTime),
                 }
                 return JsonResponse(output)
+            else:
+                return HttpResponse("ERR: You are not allowed to park here")
         else:
             return HttpResponseBadRequest("ERR: You are not registered.")
     else:
