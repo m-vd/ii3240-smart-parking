@@ -25,6 +25,8 @@ from django.urls import path, include
 from ticketing.views import CheckInAPI
 from ticketing.views import CheckOutAPI
 from api.views import CheckInLotAPI
+from api.views import CheckOutLotAPI
+
 #Help
 from help.views import AskHelpAPI
 from help.views import AnswerHelpAPI
@@ -50,6 +52,7 @@ urlpatterns = [
     path('ask-help', AskHelpAPI),
     path('answer-help', AnswerHelpAPI),
     path('lot/check-in', CheckInLotAPI),
+    path('lot/check-out', CheckOutLotAPI),
     path('add-disaster', AddDisaster),
     path('update-disaster', UpdateDisaster),
     path('capacity', getCapacity),
