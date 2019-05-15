@@ -19,7 +19,8 @@ def countTicket(request, *args, **kwargs):
     counter_sipil = 0
     counter_sr_motor = 0
     counter_sr_mobil = 0
-    counter_dalam = 0
+    counter_dalam_mobil = 0
+    counter_dalam_motor = 0
     tickets = Ticket.objects.all()
     if (request.method == 'POST'):
 	#query untuk setelah mengisi form
@@ -36,10 +37,11 @@ def countTicket(request, *args, **kwargs):
                 else:
                     counter_dalam +=1
             counter = {
-		        'sipil' : counter_sipil,
-		        'motor_sr'	: counter_sr_motor,
-		        'mobil_sr'	: counter_sr_mobil,
-		        'dalam' : counter_dalam,
+		       'sipil' : counter_sipil,
+			    'motor_sr'	: counter_sr_motor,
+			    'mobil_sr'	: counter_sr_mobil,
+			    'mobil_dalam' : counter_dalam_mobil,
+			    'motor_dalam' : counter_dalam_motor,
 		        'date' : "Ini semuanya",
 	        }	        
             return render(request, 'api/index.html', {'counter': counter })
@@ -62,9 +64,10 @@ def countTicket(request, *args, **kwargs):
                         counter_dalam +=1
             counter = {
 		        'sipil' : counter_sipil,
-		        'motor_sr'	: counter_sr_motor,
-		        'mobil_sr'	: counter_sr_mobil,
-		        'dalam' : counter_dalam,
+			    'motor_sr'	: counter_sr_motor,
+			    'mobil_sr'	: counter_sr_mobil,
+			    'mobil_dalam' : counter_dalam_mobil,
+			    'motor_dalam' : counter_dalam_motor,
 		        'date' :  date,
 	        }
             return render(request, 'api/index.html', {'counter': counter })
@@ -78,13 +81,16 @@ def countTicket(request, *args, **kwargs):
                     counter_sr_motor += 1
                 elif (t.location.lotID == 'Mobil_SR'):
                     counter_sr_mobil += 1
+                elif (t.location.lotID == 'Dalam_Motor_LabtekV' or t.location.lotID == 'Dalam_Motor_LabtekVIII'):
+                    counter_dalam_motor += 1
                 else:
-                    counter_dalam += 1
+                    counter_dalam_mobil += 1
         counter = {
 			'sipil' : counter_sipil,
 			'motor_sr'	: counter_sr_motor,
 			'mobil_sr'	: counter_sr_mobil,
-			'dalam' : counter_dalam,
+			'mobil_dalam' : counter_dalam_mobil,
+			'motor_dalam' : counter_dalam_motor,
 			'date' : "Kendaraan yang Terparkir Saat Ini",
 		}	        
         return render(request, 'api/index.html', {'counter': counter })
@@ -93,7 +99,8 @@ def countPayment(request, *args, **kwargs):
     amount_sipil = 0
     amount_sr_motor = 0
     amount_sr_mobil = 0
-    amount_dalam = 0
+    amount_dalam_mobil = 0
+    amount_dalam_motor = 0
     payment = Payment.objects.all()
     if (request.method == 'POST'):
 	#query untuk setelah mengisi form
@@ -111,13 +118,16 @@ def countPayment(request, *args, **kwargs):
                     amount_sr_motor += p.amount
                 elif (p.ticketID.location.lotID == 'Mobil_SR'):
                     amount_sr_mobil += p.amount
+                elif (p.ticketID.location.lotID == 'Dalam_Motor_LabtekV' or p.ticketID.location.lotID == 'Dalam_Motor_LabtekVIII'):
+                    amount_dalam_motor += p.amount
                 else:
-                    amount_dalam += p.amount
+                    amount_dalam_mobil += p.amount
         counter = {
 		    'sipil' : amount_sipil,
 		    'motor_sr'	: amount_sr_motor,
 		    'mobil_sr'	: amount_sr_mobil,
-		    'dalam' : amount_dalam,
+		    'mobil_dalam' : amount_dalam_mobil,
+		    'motor_dalam' : amount_dalam_motor,
 		    'date' :  date,
 	    }
         return render(request, 'api/payment.html', {'counter': counter })
@@ -143,13 +153,16 @@ def countPayment(request, *args, **kwargs):
                     amount_sr_motor += p.amount
                 elif (p.ticketID.location.lotID == 'Mobil_SR'):
                     amount_sr_mobil += p.amount
+                elif (p.ticketID.location.lotID == 'Dalam_Motor_LabtekV' or p.ticketID.location.lotID == 'Dalam_Motor_LabtekVIII'):
+                    amount_dalam_motor += p.amount
                 else:
-                    amount_dalam += p.amount
+                    amount_dalam_mobil += p.amount
         counter = {
 		    'sipil' : amount_sipil,
 		    'motor_sr'	: amount_sr_motor,
 		    'mobil_sr'	: amount_sr_mobil,
-		    'dalam' : amount_dalam,
+		    'mobil_dalam' : amount_dalam_mobil,
+		    'motor_dalam' : amount_dalam_motor,
 		    'date' :  "Total pemasukan hari ini: ",
 	    }
         return render(request, 'api/payment.html', {'counter': counter })

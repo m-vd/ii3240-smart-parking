@@ -25,7 +25,8 @@
           ['Sipil',     {{counter.sipil}}],
           ['Seni Rupa (Motor)',      {{counter.motor_sr}}],
           ['Seni Rupa (Mobil)',      {{counter.mobil_sr}}],
-          ['Dalam Kampus', {{counter.dalam}}],
+          ['Dalam Kampus (Motor)', {{ counter.motor_dalam}}],
+          ['Dalam Kampus (Mobil)', {{counter.mobil_dalam}}],
         ]);
 
         var options = {
@@ -45,12 +46,12 @@
         <ul>
           <li>
               <ul>
-                  <li><a href="/getCountTicket">Laporan Tiket</a></li>
-                  <li><a href="/getDisaster">Laporan Kejadian</a></li>
-                  <li><a href="/getCountPayment">Laporan Keuangan</a></li>
+                  <li><a href="/get-count-ticket">Laporan Tiket</a></li>
+                  <li><a href="/get-disaster">Laporan Kejadian</a></li>
+                  <li><a href="/get-count-payment">Laporan Keuangan</a></li>
                   <li><a href="/report">Generate Report</a></li>
                   <li><a href="/answer-help">Jawab Pertanyaan</a></li>
-                  <li><a href="/report">Generate Report</a></li>
+                  <li><a href="/add-disaster">Lapor Kejadian</a></li>
               </ul>
           </li>
         </ul>
@@ -63,7 +64,7 @@
       <h2>LAPORAN TIKET</h2>
     </section>
     <section id="main-content">
-		<form action="/getCountTicket" method="post">
+		<form action="/get-count-ticket" method="post">
 			{% csrf_token %}
             <label>Dari</label>
 			<input type="date" id="dt" name="dt" class="form-control"  /><br />
@@ -80,9 +81,9 @@
           <p>Sipil			: {{counter.sipil}}</p>
           <p>Seni Rupa (Motor)	: {{counter.motor_sr}}</p>
           <p>Seni Rupa (Mobil)	: {{counter.mobil_sr}}</p>
-          <p>Dalam Kampus	: {{counter.dalam}}</p>
+          <p>Dalam Kampus (Motor)	: {{counter.motor_dalam}}</p>
+          <p>Dalam Kampus (Mobil)	: {{counter.mobil_dalam}}</p>
           <p style="color:white;">Capicola prosciutto shankle fpancetta filet mignon turducken boudin biltong venison shank.</p>
-          <p><a href="http://127.0.0.1:8000/accident" class="more">Laporan Kejadian</a></p>
         </div>
      </div>
     </section>
