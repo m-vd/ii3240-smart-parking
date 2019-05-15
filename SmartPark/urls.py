@@ -61,8 +61,8 @@ urlpatterns = [
     path('check-in-booking', CheckInBooking),
     path('userfe/', include('userfe.urls')),
     path('accounts/', include('django.contrib.auth.urls')),
-    path('getCountTicket',countTicket),
-    path('getCountPayment',countPayment),
-    path('getDisaster',countDisaster),
+    path('get-count-ticket',countTicket),
+    path('get-count-payment',countPayment),
+    path('get-disaster',countDisaster),
     path('report', ReportView.as_view()),
 ]

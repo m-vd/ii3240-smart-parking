@@ -41,8 +41,13 @@ Ticketing handles both check in and check out requests for the clients.
 * **Sample Call:**
 
   ```bash
-  curl -i /checkin
-  curl -i /checkout
+  curl -X POST http://localhost:8000/check-in \
+  -H 'Content-Type: application/x-www-form-urlencoded' \
+  -d 'userID=18216017&locationID=Motor_SR'
+
+  curl -X POST http://localhost:8000/check-out \
+  -H 'Content-Type: application/x-www-form-urlencoded' \
+  -d 'userID=18216017'
   ```
 
 * **Data Params**
@@ -95,8 +100,13 @@ This service is intended as a help center to help users if there's anything that
 * **Sample Call:**
 
   ```bash
-  curl -i /ask-help
-  curl -i /answer-help
+  curl -X POST http://localhost:8000/ask-help \
+  -H 'Content-Type: application/x-www-form-urlencoded' \
+  -d 'userID=18216001&question=Hi,%20how%20are%20you?'
+  
+  curl -X POST http://localhost:8000/answer-help \
+  -H 'Content-Type: application/x-www-form-urlencoded' \
+  -d 'helpID=0f648e88-cdaf-4c92-ac09-b3471a7f8649&answer=Hi,%20how%20are%20you?'
   ```
 
 * **Data Params**
@@ -129,7 +139,7 @@ This service is intended as a help center to help users if there's anything that
     {  
       "helpID": "0f648e88-cdaf-4c92-ac09-b3471a7f8649",
       "question": "Hi, how are you?",
-      "answer": "I'm fine, thanks! How about you?"
+      "answer": "=I'\''m%20fine%2C%20thanks!%20How%20about%20you?"
     }
     ```  
 
