@@ -7,7 +7,6 @@ class User(models.Model):
     userEmail   = models.EmailField(max_length=50)
     userPhone   = models.CharField(max_length=13)
     userType    = models.SmallIntegerField()
-        # 0 - admin
         # 1 - mahasiswa
         # 2 - dosen
         # 3 - staff teknis
@@ -15,5 +14,6 @@ class User(models.Model):
         # 5 - tamu
         # 6 - dekan
         # 7 - kaprodi
+        # 8 - admin
     cardNumber  = models.CharField(max_length=50)
     userBalance = models.PositiveIntegerField()

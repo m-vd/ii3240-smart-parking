@@ -161,7 +161,9 @@ def countDisaster(request, *args, **kwargs):
         date_str = date + " 00:00:00.0"
         date_time_obj = datetime.strptime(date_str, '%Y-%m-%d %H:%M:%S.%f')
         d1 = date_time_obj + timedelta(days=1)
-        disaster = Disaster.objects.raw('SELECT * FROM Disaster WHERE disasterTime > VALUES(?) AND disasterTime < VALUES(?)', (date_time_obj, d1))    
+        # disaster = Disaster.objects.raw('SELECT * FROM Disaster WHERE disasterTime > VALUES(?) AND disasterTime < VALUES(?)', (date_time_obj, d1))    
+        disaster = Disaster.objects.filter(disasterTime__range=(date_time_obj, d1))
+        
         return render(request, 'api/disaster.html', {'disaster': disaster })
     else:   
         now = datetime.now()
