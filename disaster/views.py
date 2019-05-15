@@ -37,7 +37,7 @@ def AddDisaster(request, *args, **kwargs):
         }
         return JsonResponse(output)
     else:
-        return HttpResponseForbidden("ERR: You are not allowed to access this endpoint.")
+        return render(request, 'api/add-disaster.html')
 
 def UpdateDisaster(request, *args, **kwargs):
     #required parameter: disasterID, 

@@ -61,4 +61,6 @@ def AnswerHelpAPI(request, *args, **kwargs):
         else:
             return HttpResponseBadRequest("ERR: No answer is given.")
     else:
-        return HttpResponse()
+        #disaster = Disaster.objects.raw('SELECT * FROM Disaster WHERE disasterTime > VALUES(?) AND disasterTime < VALUES(?)', (date_time_obj, d1))
+        unanswered = Help.objects.filter(answer = None) 
+        return render(request, 'api/answer-help.html', {'unanswered': unanswered })

@@ -1,0 +1,86 @@
+﻿<!DOCTYPE HTML>
+<html>
+<head>
+    <title>White Edition</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <link rel="stylesheet" href="static/style.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" 
+    integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+    
+</head>
+<body>
+<header>
+  <nav class="main-nav">
+    <ul>
+      <li>
+          <ul>
+            <li><a href="/getCountTicket">Laporan Tiket</a></li>
+            <li><a href="/getDisaster">Laporan Kejadian</a></li>
+            <li><a href="/getCountPayment">Laporan Keuangan</a></li>
+            <li><a href="/report">Generate Report</a></li>
+            <li><a href="/answer-help">Jawab Pertanyaan</a></li>
+            <li><a href="/report">Generate Report</a></li>
+          </ul>
+      </li>
+    </ul>
+  </nav>
+</header>
+
+
+<section id="video" class="home">
+  <h1>SMART PARKIR</h1>
+  <h2>LAPORAN KEJADIAN</h2>
+</section>
+<section id="main-content">
+    <form action="/answer-help" method="post">
+        {% csrf_token %}
+        <div class="form-group">
+            <label for="helpID">helpID</label>
+            <input class="form-control" name="helpID" id="helpID" /><br />
+        </div>
+        <div class="form-group">
+            <label for="answer">Answer</label>
+            <input class="form-control" name="answer" id="answer" /><br />
+        </div>
+        <input type="submit" class="btn btn-dark btn-block" name="Send" value="Download Report" />
+    </form>
+    <div class="container">
+        <br /><br />
+        <div class="col-sm-3">
+            <p>ID</p>
+        </div>
+        <div class="col-sm-3">
+            <p>Waktu Bertanya</p>
+        </div>
+        <div class="col-sm-3">
+            <p>UserID</p>
+        </div>
+        <div class="col-sm-3">
+            <p>Pertanyaan</p>
+        </div>
+
+        {% for d in unanswered %}
+        <div class="col-sm-3">
+            <p>{{d.helpID}}</p>
+        </div>
+        <div class="col-sm-3">
+            <p>{{d.questionTime}}</p>
+        </div>
+        <div class="col-sm-3">
+            <p>{{d.user.userID}}</p>
+        </div>
+        <div class="col-sm-3">
+            <p>{{d.question}}</p>
+        </div>
+        {% endfor %}
+    </div>
+</section>
+<br><br>
+    
+</body>
+</html>

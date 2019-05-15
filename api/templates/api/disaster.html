@@ -1,5 +1,4 @@
 ﻿<!DOCTYPE HTML>
-{% extend 'base.html' % }
 {% load static %}
 
 {% block body %}
@@ -45,10 +44,12 @@
             <ul>
                 <li>
                     <ul>
-                        <li><a href="/getCountTicket">Laporan Parkir</a></li>
-                        <li><a href="/getAccident">Laporan Kejadian</a></li>
+                        <li><a href="/getCountTicket">Laporan Tiket</a></li>
+                        <li><a href="/getDisaster">Laporan Kejadian</a></li>
                         <li><a href="/getCountPayment">Laporan Keuangan</a></li>
-                        <li><a href="/report">Laporan Keuangan</a></li>
+                        <li><a href="/report">Generate Report</a></li>
+                        <li><a href="/answer-help">Jawab Pertanyaan</a></li>
+                        <li><a href="/report">Generate Report</a></li>
                     </ul>
                 </li>
             </ul>
@@ -80,20 +81,37 @@
             <input type="submit" class="btn btn-dark btn-block" name="Search" value="Search" onclick="showTable()" />
         </form>
         <div class="container">
-            {% for d in 'disaster' %}
-            <div class="col-sm-6">
+            <br /><br />
+            <div class="col-sm-3">
+                <p>ID</p>
+            </div>
+            <div class="col-sm-3">
+                <p>Waktu</p>
+            </div>
+            <div class="col-sm-2">
+                <p>Lokasi</p>
+            </div>
+            <div class="col-sm-2">
+                <p>Status</p>
+            </div>
+            <div class="col-sm-2">
+                <p>Deskripsi</p>
+            </div>
+
+            {% for d in disaster %}
+            <div class="col-sm-3">
                 <p>{{d.disasterID}}</p>
             </div>
-            <div class="col-sm-6">
+            <div class="col-sm-3">
                 <p>{{d.disasterTime}}</p>
             </div>
-            <div class="col-sm-6">
+            <div class="col-sm-2">
                 <p>{{d.location.lotID}}</p>
             </div>
-            <div class="col-sm-6">
+            <div class="col-sm-2">
                 <p>{{d.status}}</p>
             </div>
-            <div class="col-sm-6">
+            <div class="col-sm-2">
                 <p>{{d.description}}</p>
             </div>
             {% endfor %}

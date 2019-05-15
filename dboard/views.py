@@ -161,7 +161,8 @@ def countDisaster(request, *args, **kwargs):
         date_str = date + " 00:00:00.0"
         date_time_obj = datetime.strptime(date_str, '%Y-%m-%d %H:%M:%S.%f')
         d1 = date_time_obj + timedelta(days=1)
-        disaster = Disaster.objects.raw('SELECT * FROM Disaster WHERE disasterTime > VALUES(?) AND disasterTime < VALUES(?)', (date_time_obj, d1))    
+        #disaster = Disaster.objects.raw('SELECT * FROM Disaster WHERE disasterTime > VALUES(?) AND disasterTime < VALUES(?)', (date_time_obj, d1))
+        disaster = Disaster.objects.filter(disasterTime__range=(date_time_obj,d1))    
         return render(request, 'api/disaster.html', {'disaster': disaster })
     else:   
         now = datetime.now()
@@ -169,8 +170,30 @@ def countDisaster(request, *args, **kwargs):
         today = datetime.strptime(today_str, '%Y-%m-%d %H:%M:%S.%f')
         tomorow = today + timedelta(days=1)
 
-        disaster = Disaster.objects.raw('SELECT * FROM Disaster WHERE disasterTime > VALUES(?) AND disasterTime < VALUES(?)', (today, tomorow))
+        #disaster = Disaster.objects.raw('SELECT * FROM Disaster WHERE disasterTime > VALUES(?) AND disasterTime < VALUES(?)', (today, tomorow))
+        # disaster = Disaster.objects.filter(disasterTime__range=(today,tomorow))
+        disaster = Disaster.objects.all()
+        return render(request, 'api/disaster.html', {'disaster': disaster})
 
+def getUnanswered(request, *args, **kwargs):
+   
+    if (request.method == 'POST'):
+        date = request.POST.get('dt')
+        date_str = date + " 00:00:00.0"
+        date_time_obj = datetime.strptime(date_str, '%Y-%m-%d %H:%M:%S.%f')
+        d1 = date_time_obj + timedelta(days=1)
+        #disaster = Disaster.objects.raw('SELECT * FROM Disaster WHERE disasterTime > VALUES(?) AND disasterTime < VALUES(?)', (date_time_obj, d1))
+        disaster = Disaster.objects.filter(disasterTime__range=(date_time_obj,d1))    
+        return render(request, 'api/disaster.html', {'disaster': disaster })
+    else:   
+        now = datetime.now()
+        today_str = now.strftime("%Y-%m-%d") + " 00:00:00.01"
+        today = datetime.strptime(today_str, '%Y-%m-%d %H:%M:%S.%f')
+        tomorow = today + timedelta(days=1)
+
+        #disaster = Disaster.objects.raw('SELECT * FROM Disaster WHERE disasterTime > VALUES(?) AND disasterTime < VALUES(?)', (today, tomorow))
+        # disaster = Disaster.objects.filter(disasterTime__range=(today,tomorow))
+        disaster = Disaster.objects.all()
         return render(request, 'api/disaster.html', {'disaster': disaster})
 
 class ReportView(TemplateView):
