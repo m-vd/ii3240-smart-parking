@@ -62,13 +62,13 @@
     </section>
     <section id="main-content">
         <form action="/get-disaster" method="POST" enctype="multipart/form-data">
-            <div class="col-sm-6">
+            <div class="col-sm-8">
                 <div class="form-group">
                     <label for="dt">Tanggal Kejadian</label>
                     <input class="form-control" id="dt" name="dt" type="date" />
                 </div>
             </div>
-            <div class="col-sm-6">
+            {% comment %} <div class="col-sm-6">
                 <div class="form-group">
                     <label for="loct">Jenis Kejadian</label>
                     <select class="form-control" id="loct">
@@ -77,7 +77,7 @@
                         <option value="Lain-lain">Lain-lain</option>
                     </select>
                 </div>
-            </div>
+            </div> {% endcomment %}
             <input type="submit" class="btn btn-dark btn-block" name="Search" value="Search" onclick="showTable()" />
         </form>
         <div class="container">

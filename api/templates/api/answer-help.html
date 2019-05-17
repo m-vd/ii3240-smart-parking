@@ -51,13 +51,13 @@
     </form>
     <div class="container">
         <br /><br />
-        <div class="col-sm-3">
+        <div class="col-sm-4">
             <p>ID</p>
         </div>
         <div class="col-sm-3">
             <p>Waktu Bertanya</p>
         </div>
-        <div class="col-sm-3">
+        <div class="col-sm-2">
             <p>UserID</p>
         </div>
         <div class="col-sm-3">
@@ -65,13 +65,13 @@
         </div>
 
         {% for d in unanswered %}
-        <div class="col-sm-3">
+        <div class="col-sm-4">
             <p>{{d.helpID}}</p>
         </div>
         <div class="col-sm-3">
             <p>{{d.questionTime}}</p>
         </div>
-        <div class="col-sm-3">
+        <div class="col-sm-2">
             <p>{{d.user.userID}}</p>
         </div>
         <div class="col-sm-3">
