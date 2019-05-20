@@ -12,8 +12,8 @@ To run the services, go to the root folder of services (location of manage.py) a
 python manage.py runserver [IP address]:[Port]
 ```
 
-To run the server, for example use 0.0.0.0:80 to run at whatever IP address the computer have at its interface.
-If IP address and port is not defined, the server will be run at localhost:8000 (default)
+To run the server, for example use `0.0.0.0:80` to run at whatever IP address the computer have at its interface.
+If IP address and port is not defined, the server will be run at `localhost:8000` (default)
 
 ## How to Create Superuser
 
@@ -22,3 +22,7 @@ To create a superuser for accessing `/admin`, go to the root folder of services 
 ```bash
 python manage.py createsuperuser
 ```
+
+## Database
+
+There are some data that must be created manually through `/admin` such as parking lot and users.
